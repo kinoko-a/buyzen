@@ -109,5 +109,4 @@
 https://www.figma.com/design/I13RiAe7Jm5zpk2mMcOQss/BuyZen?node-id=36-3027&p=f&t=6aR7NXQ9WivhPFJ3-0
 
 ## ER図
-![ER図](./er_diagram.png)
-[拡大して表示](./er_diagram.png)
+![ER図](docs//er_diagram.png)
