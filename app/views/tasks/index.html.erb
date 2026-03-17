@@ -1,0 +1,18 @@
+<h1 class="text-4xl text-green-700 font-semibold underline">Hello,world</h1>
+
+<p style="color: green"><%= notice %></p>
+
+<% content_for :title, "Tasks" %>
+
+<h1>Tasks</h1>
+
+<div id="tasks">
+  <% @tasks.each do |task| %>
+    <%= render task %>
+    <p>
+      <%= link_to "Show this task", task %>
+    </p>
+  <% end %>
+</div>
+
+<%= link_to "New task", new_task_path %>
