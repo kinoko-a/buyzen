@@ -1,2 +1,55 @@
 @import "tailwindcss";
 @plugin "daisyui";
+
+@plugin "daisyui/theme" {
+  name: "buyzen";
+  default: true; /* set as default */
+  prefersdark: false; /* set as default dark mode (prefers-color-scheme:dark) */
+  color-scheme: light; /* color of browser-provided UI */
+
+  --color-base-100: #FAFAF7; /* white */
+  --color-base-200: #F0EFEA;
+  --color-base-300: #E5E2DA;
+  --color-primary: #B2CB87; /* green1 */
+  --color-secondary: #BFE3C2; /* green2 */
+  --color-accent: #E6C96A; /* gold */
+  --color-neutral: #808D9F; /* gray */
+  --color-info: #ACCED8; /* blue */
+  --color-success: #A3B18B; /* green1 */
+  --color-warning: #DABB3D;
+  --color-error: #e57373;
+
+  --rounded-box: 1rem;
+  --rounded-btn: 0.75rem;
+}
+
+@layer base {
+  html {
+    font-family: 'Inter', 'Noto Sans JP', sans-serif;
+  }
+
+  body {
+    @apply text-neutral;
+    font-weight: 300;
+  }
+}
+
+@layer components {
+  .container-main {
+    @apply max-w-2xl mx-auto px-4 py-8;
+  }
+
+  .card-base {
+    @apply bg-base-100 shadow-sm rounded-xl p-6;
+  }
+
+  .btn-base {
+    @apply btn btn-primary text-lg
+      btn-xs sm:btn-sm md:btn-md lg:btn-lg xl:btn-xl;
+    color: #ffffff;
+  }
+
+  .btn-base:hover {
+    opacity: 0.9;
+  }
+}
