@@ -10,7 +10,7 @@
   --color-base-100: #F8F9F7; /* white */
   --color-base-200: #E3EAE0;
   --color-base-300: #D6DED3;
-  --color-primary: #B2CB87; /* green1 */
+  --color-primary: #A8C276; /* green1 */
   --color-secondary: #BFE3C2; /* green2 */
   --color-accent: #E6C96A; /* gold */
   --color-neutral: #5F6B7A; /* gray */
@@ -46,17 +46,11 @@
   }
 
   .btn-base {
-    @apply btn btn-primary text-lg
-      btn-xs sm:btn-sm md:btn-md lg:btn-lg xl:btn-xl;
+    @apply btn btn-primary;
     color: #ffffff;
   }
 
   .btn-base:hover {
     opacity: 0.9;
-  }
-
-  .btn-base-outline {
-    @apply btn btn-outline text-lg
-      btn-xs sm:btn-sm md:btn-md lg:btn-lg xl:btn-xl;
   }
 }
