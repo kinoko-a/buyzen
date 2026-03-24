@@ -7,13 +7,13 @@
   prefersdark: false; /* set as default dark mode (prefers-color-scheme:dark) */
   color-scheme: light; /* color of browser-provided UI */
 
-  --color-base-100: #FAFAF7; /* white */
-  --color-base-200: #F0EFEA;
-  --color-base-300: #E5E2DA;
+  --color-base-100: #F8F9F7; /* white */
+  --color-base-200: #E3EAE0;
+  --color-base-300: #D6DED3;
   --color-primary: #B2CB87; /* green1 */
   --color-secondary: #BFE3C2; /* green2 */
   --color-accent: #E6C96A; /* gold */
-  --color-neutral: #808D9F; /* gray */
+  --color-neutral: #5F6B7A; /* gray */
   --color-info: #ACCED8; /* blue */
   --color-success: #A3B18B; /* green1 */
   --color-warning: #DABB3D;
@@ -36,11 +36,13 @@
 
 @layer components {
   .container-main {
-    @apply max-w-2xl mx-auto px-4 py-8;
+    @apply max-w-3xl mx-auto px-4 py-8;
   }
 
   .card-base {
-    @apply bg-base-100 shadow-sm rounded-xl p-6;
+    @apply shadow-sm rounded-xl p-6 bg-base-100;
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    transition: all 0.2s ease;
   }
 
   .btn-base {
@@ -51,5 +53,10 @@
 
   .btn-base:hover {
     opacity: 0.9;
+  }
+
+  .btn-base-outline {
+    @apply btn btn-outline text-lg
+      btn-xs sm:btn-sm md:btn-md lg:btn-lg xl:btn-xl;
   }
 }
