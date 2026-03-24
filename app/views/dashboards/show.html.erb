@@ -1,0 +1,99 @@
+<div class="container-main space-y-8">
+
+  <!-- ヘッダー -->
+  <div class="flex items-center justify-between">
+    <h1 class="text-2xl md:text-3xl font-bold">ダッシュボード</h1>
+
+    <button class="btn-base">
+      + アイテム登録
+    </button>
+  </div>
+
+  <!-- サマリーカード -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+    <div class="card-base">
+      <div class="card-body">
+        <h2 class="card-title text-sm">考え中</h2>
+        <p class="text-2xl font-bold">5</p>
+      </div>
+    </div>
+
+    <div class="card-base">
+      <div class="card-body">
+        <h2 class="card-title text-sm">買った</h2>
+        <p class="text-2xl font-bold">2</p>
+      </div>
+    </div>
+
+    <div class="card-base">
+      <div class="card-body">
+        <h2 class="card-title text-sm">買わなかった</h2>
+        <p class="text-2xl font-bold">3</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- メインリスト -->
+  <div class="card bg-base-200 shadow-sm">
+    <div class="card-body">
+
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="card-title">最近のアイテム</h2>
+        <button class="btn btn-outline">すべて見る</button>
+      </div>
+
+      <ul class="space-y-4">
+
+        <li class="flex items-center justify-between p-3 rounded-lg bg-base-100">
+          <div>
+            <p class="font-medium">アイテム1</p>
+            <p class="text-sm opacity-70">クールダウン完了</p>
+          </div>
+          <button class="btn btn-sm btn-ghost">詳細</button>
+        </li>
+
+        <li class="flex items-center justify-between p-3 rounded-lg bg-base-100">
+          <div>
+            <p class="font-medium">アイテム2</p>
+            <p class="text-sm opacity-70">下書き中</p>
+          </div>
+          <button class="btn btn-sm btn-ghost">詳細</button>
+        </li>
+
+        <li class="flex items-center justify-between p-3 rounded-lg bg-base-100">
+          <div>
+            <p class="font-medium">アイテム3</p>
+            <p class="text-sm opacity-70">クールダウン中</p>
+          </div>
+          <button class="btn btn-sm btn-ghost">詳細</button>
+        </li>
+
+      </ul>
+
+    </div>
+  </div>
+
+  <!-- アクション -->
+  <div class="card-base">
+    <div class="card-body text-center space-y-4">
+
+      <h2 class="text-lg font-semibold">
+        次に何をしますか？
+      </h2>
+
+      <div class="flex flex-col sm:flex-row justify-center gap-4">
+        <button class="btn-base">
+          アイテムを追加
+        </button>
+
+        <button class="btn-base-outline">
+          考える時間を作る
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+</div>
