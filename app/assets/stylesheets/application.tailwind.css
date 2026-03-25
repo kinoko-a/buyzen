@@ -14,10 +14,10 @@
   --color-secondary: #BFE3C2; /* green2 */
   --color-accent: #E6C96A; /* gold */
   --color-neutral: #5F6B7A; /* gray */
-  --color-info: #ACCED8; /* blue */
-  --color-success: #A3B18B; /* green1 */
-  --color-warning: #DABB3D;
-  --color-error: #e57373;
+  --color-info: #7FAFC4; /* blue */
+  --color-success: #86A96F; /* green */
+  --color-warning: #B89424; /* yellow */
+  --color-error: #C85C5C; /* red */
 
   --rounded-box: 1rem;
   --rounded-btn: 0.75rem;
