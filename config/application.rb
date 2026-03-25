@@ -47,5 +47,7 @@ module Myapp
         routing_specs: false
       g.factory_bot true
     end
+
+    config.i18n.default_locale = :ja
   end
 end
