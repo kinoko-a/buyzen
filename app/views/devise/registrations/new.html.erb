@@ -1,0 +1,46 @@
+<div class="flex justify-center mt-4">
+  <%= render "devise/shared/error_messages", resource: resource %>
+</div>
+
+<div class="min-h-screen flex items-center justify-center px-4 py-10">
+  <div class="max-w-md w-full space-y-6">
+    <h2 class="text-3xl md:text-4xl text-center font-light tracking-wide">
+      アカウントを作成
+    </h2>
+
+    <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
+      <div class="space-y-5">
+        <div>
+          <%= f.label :name, class: "block text-sm font-normal" %>
+          <%= f.text_field :name, placeholder: t("placeholders.user.name"), autofocus: true, autocomplete: "name", class: "input input-bordered w-full focus:outline-none focus:ring-1 focus:ring-primary/30" %>
+        </div>
+
+        <div>
+          <%= f.label :email, class: "block text-sm font-normal" %>
+          <%= f.email_field :email, placeholder: t("placeholders.user.email"), autocomplete: "email", class: "input input-bordered w-full focus:outline-none focus:ring-1 focus:ring-primary/30" %>
+        </div>
+
+        <div>
+          <div class="flex">
+            <%= f.label :password, class: "block text-sm font-normal" %>
+            <p class="text-xs opacity-80 mt-0.5 ml-3">6文字以上で、英数字を混ぜて入力してください</p>
+          </div>
+          <%= f.password_field :password, placeholder: t("placeholders.user.password"), autocomplete: "new-password", class: "input input-bordered w-full focus:outline-none focus:ring-1 focus:ring-primary/30" %>
+        </div>
+
+        <div>
+          <%= f.label :password_confirmation, class: "block text-sm font-normal" %>
+          <%= f.password_field :password_confirmation, placeholder: t("placeholders.user.password_confirmation"), autocomplete: "new-password", class: "input input-bordered w-full focus:outline-none focus:ring-1 focus:ring-primary/30" %>
+        </div>
+
+        <div class="pt-4 text-center">
+          <%= f.submit "新規登録", class: "btn-base btn-lg px-20 text-md font-normal" %>
+        </div>
+      </div>
+    <% end %>
+
+    <div class="text-center text-sm">
+      <%= render "devise/shared/links" %>
+    </div>
+  </div>
+</div>

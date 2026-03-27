@@ -1,1 +1,7 @@
 ja:
+  placeholders:
+    user:
+      name: ユーザー名
+      email: mail@example.com
+      password: パスワード
+      password_confirmation: パスワード(確認)
