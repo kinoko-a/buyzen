@@ -1,0 +1,36 @@
+<div class="min-h-screen flex items-center justify-center px-4 py-10">
+  <div class="max-w-md w-full space-y-6">
+    <h2 class="text-3xl md:text-4xl text-center font-light tracking-wide">
+      ログイン
+    </h2>
+
+    <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+      <div class="space-y-5">
+        <div>
+          <%= f.label :email, class: "block text-sm font-normal" %>
+          <%= f.email_field :email, placeholder: t("placeholders.user.email"), autofocus: true, autocomplete: "email", class: "input input-bordered w-full focus:outline-none focus:ring-1 focus:ring-primary/30" %>
+        </div>
+
+        <div>
+          <%= f.label :password, class: "block text-sm font-normal" %>
+          <%= f.password_field :password, placeholder: t("placeholders.user.password"), autocomplete: "current-password", class: "input input-bordered w-full focus:outline-none focus:ring-1 focus:ring-primary/30" %>
+        </div>
+
+        <% if devise_mapping.rememberable? %>
+          <div class="flex items-center space-x-2">
+            <p><%= f.check_box :remember_me, class: "checkbox checkbox-sm checked:text-neutral/80" %></p>
+            <p><%= f.label :remember_me, "次回から自動でログイン", class: "text-sm" %></p>
+          </div>
+        <% end %>
+
+        <div class="pt-4 text-center">
+          <%= f.submit "ログイン", class: "btn-base btn-lg px-20 text-md font-normal" %>
+        </div>
+      </div>
+    <% end %>
+
+    <div class="text-center text-sm space-y-5">
+      <%= render "devise/shared/links" %>
+    </div>
+  </div>
+</div>

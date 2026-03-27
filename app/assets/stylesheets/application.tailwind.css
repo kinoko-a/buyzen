@@ -11,13 +11,13 @@
   --color-base-200: #E3EAE0;
   --color-base-300: #D6DED3;
   --color-primary: #A8C276; /* green1 */
-  --color-secondary: #BFE3C2; /* green2 */
-  --color-accent: #E6C96A; /* gold */
+  --color-secondary: #9FC8A3; /* green2 */
+  --color-accent: #DABB3D; /* gold */
   --color-neutral: #5F6B7A; /* gray */
-  --color-info: #ACCED8; /* blue */
-  --color-success: #A3B18B; /* green1 */
-  --color-warning: #DABB3D;
-  --color-error: #e57373;
+  --color-info: #7FAFC4; /* blue */
+  --color-success: #86A96F; /* green3 */
+  --color-warning: #B89424; /* yellow */
+  --color-error: #C85C5C; /* red */
 
   --rounded-box: 1rem;
   --rounded-btn: 0.75rem;

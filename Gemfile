@@ -38,6 +38,9 @@ gem "image_processing", "~> 1.2"
 
 gem "rails-i18n", "~> 8.1.0"
 
+gem "devise", "~> 5.0"
+gem "devise-i18n"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
