@@ -1,8 +1,8 @@
 <div class="w-full mt-4 px-4">
   <% flash.each do |message_type, message| %>
-    <div class="alert <%= flash_class(message_type) %> alert-soft border flex items-center gap-2">
+    <div class="alert <%= flash_class(message_type) %> alert-soft bg-opacity-70 border-opacity-80 border flex items-center gap-2 p-4">
       <ion-icon name="<%= flash_icon(message_type) %>" class="w-6 h-6"></ion-icon>
-      <span><%= message %></span>
+      <span class="font-medium"><%= message %></span>
     </div>
   <% end %>
 </div>
