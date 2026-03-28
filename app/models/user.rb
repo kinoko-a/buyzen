@@ -9,5 +9,7 @@ class User < ApplicationRecord
 
   validates :name, presence: true, length: { maximum: 30 }
   validates :password, format: { with: /\A(?=.*[a-zA-Z])(?=.*\d).+\z/,
-             message: "は英数字を混ぜて入力してください" }
+                       message: "は英数字を混ぜて入力してください" }
+
+  has_many :items, dependent: :destroy
 end
