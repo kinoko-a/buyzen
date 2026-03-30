@@ -1,0 +1,30 @@
+<div class="max-w-3xl mx-auto px-4 py-6">
+
+  <!-- ヘッダー -->
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold">アイテム一覧</h1>
+    <%= link_to "＋ アイテム追加", "#", class: "btn-base" %>
+  </div>
+
+  <!-- タブ -->
+  <div class="tabs tabs-border mb-6 justify-center">
+    <%= link_to "すべて", items_path, class: "tab px-8 #{params[:status].blank? ? 'tab-active' : ''}" %>
+    <%= link_to "検討中", items_path(status: "thinking"), class: "tab px-8 #{params[:status] == 'thinking' ? 'tab-active' : ''}" %>
+    <%= link_to "購入", items_path(status: "decided_buy"), class: "tab px-8 #{params[:status] == 'decided_buy' ? 'tab-active' : ''}" %>
+    <%= link_to "見送り", items_path(status: "decided_skip"), class: "tab px-8 #{params[:status] == 'decided_skip' ? 'tab-active' : ''}" %>
+  </div>
+
+  <!-- アイテム一覧 -->
+  <% if @items.any? %>
+  <div class="space-y-4">
+    <% @items.each do |item| %>
+      <%= render 'items/card', item: item %>
+    <% end %>
+  </div>
+  <% else %>
+    <div class="text-center text-gray-500 mt-10">
+      <p>まだアイテムが登録されていません</p>
+    </div>
+  <% end %>
+
+</div>
