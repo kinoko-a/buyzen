@@ -1,0 +1,19 @@
+<% case item.status %>
+<% when "thinking" %>
+  <% if item.cooldown_not_selected? %>
+    <span class="badge badge-soft badge-primary text-xs">クールダウン未設定</span>
+  <% elsif item.cooldown_active? %>
+    <span class="badge badge-soft badge-primary text-xs">クールダウン中</span>
+  <% elsif item.cooldown_finished? %>
+    <span class="badge badge-soft badge-primary text-xs">クールダウン完了</span>
+  <!-- 追加予定:
+    質問回答が未回答、
+    質問回答が下書き(回答中)、
+    ジャーナリングが未回答、
+    ジャーナリングが下書き(回答中) -->
+  <% end %>
+<% when "decided_buy" %>
+  <span class="badge badge-soft badge-accent text-xs">購入</span>
+<% when "decided_skip" %>
+  <span class="badge badge-soft badge-info text-xs">見送り</span>
+<% end %>
