@@ -32,6 +32,17 @@ class Item < ApplicationRecord
     decided_buy? || decided_skip?
   end
 
+  def next_action
+    case status
+    when "thinking"
+      if cooldown_not_selected?
+        { label: "クールダウン設定", path: "#" }
+      elsif ready_for_decision?
+        { label: "判断する", path: "#" }
+      end
+    end
+  end
+
   def next_action_message
     case status
     when "thinking"

@@ -9,7 +9,12 @@ class ItemsController < ApplicationController
     end
   end
 
-  def show;end
+  def show
+    @item = Item.find(params[:id])
+    redirect_to items_path, alert: "アイテムが見つかりません" unless @item.user == current_user
+  rescue ActiveRecord::RecordNotFound
+    redirect_to items_path, alert: "アイテムが見つかりません"
+  end
 
   def new;end
 
