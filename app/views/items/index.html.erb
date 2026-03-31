@@ -10,8 +10,8 @@
   <div class="tabs tabs-border mb-6 justify-center">
     <%= link_to "すべて", items_path, class: "tab px-8 #{params[:status].blank? ? 'tab-active' : ''}" %>
     <%= link_to "検討中", items_path(status: "thinking"), class: "tab px-8 #{params[:status] == 'thinking' ? 'tab-active' : ''}" %>
-    <%= link_to "購入", items_path(status: "decided_buy"), class: "tab px-8 #{params[:status] == 'decided_buy' ? 'tab-active' : ''}" %>
-    <%= link_to "見送り", items_path(status: "decided_skip"), class: "tab px-8 #{params[:status] == 'decided_skip' ? 'tab-active' : ''}" %>
+    <%= link_to "買う", items_path(status: "decided_buy"), class: "tab px-8 #{params[:status] == 'decided_buy' ? 'tab-active' : ''}" %>
+    <%= link_to "買わない", items_path(status: "decided_skip"), class: "tab px-8 #{params[:status] == 'decided_skip' ? 'tab-active' : ''}" %>
   </div>
 
   <!-- アイテム一覧 -->
