@@ -11,6 +11,7 @@ class ItemsController < ApplicationController
 
   def show
     @item = Item.find(params[:id])
+    redirect_to items_path, alert: "アイテムが見つかりません" unless @item.user == current_user
   rescue ActiveRecord::RecordNotFound
     redirect_to items_path, alert: "アイテムが見つかりません"
   end
