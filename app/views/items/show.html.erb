@@ -33,8 +33,8 @@
     <div class="bg-gray-50 rounded-lg p-4 space-y-2">
       <p class="text-xs">メモ</p>
       <p class="text-sm">
-        <% if @item.thinking_note.present? %>
-          <%= @item.thinking_note %>
+        <% if @item.note.present? %>
+          <%= @item.note %>
         <% end %>
       </p>
     </div>
