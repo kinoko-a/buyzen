@@ -1,0 +1,74 @@
+<div class="max-w-3xl mx-auto my-8 px-4">
+  <div class="bg-white rounded-xl shadow p-6 space-y-6">
+
+    <!-- アイテム名 + 次できるアクションに遷移するボタン -->
+    <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+      <h1 class="text-2xl sm:text-3xl font-bold leading-tight">
+        <%= @item.name %>
+      </h1>
+
+      <div class="self-start sm:self-auto">
+        <%= render 'items/next_action_button', item: @item %>
+      </div>
+    </div>
+
+    <!-- ステータスバッジ -->
+    <div>
+      <%= render 'items/status_badge', item: @item %>
+    </div>
+
+    <!-- 日時情報 -->
+    <div class="text-md">
+      <ion-icon name="calendar-outline" class="text-base translate-y-[2px]"></ion-icon>
+      <span><%= @item.created_at.strftime("%Y/%-m/%-d %-H:%M") %>に登録</span>
+
+      <!-- クールダウンタイマー設定内容を追加 -->
+      <div class="flex gap-1">
+        <ion-icon name="hourglass-outline" class="text-base translate-y-[4px]"></ion-icon>
+        <p>24時間のクールダウン中(あと3時間)</p>
+      </div>
+    </div>
+
+    <!-- メモ + 質問回答 + ジャーナリング内容 -->
+    <div class="bg-gray-50 rounded-lg p-4 space-y-2">
+      <p class="text-xs">メモ</p>
+      <p class="text-sm">
+        <% if @item.thinking_note.present? %>
+          <%= @item.thinking_note %>
+        <% end %>
+      </p>
+    </div>
+
+    <!-- 質問回答を追加 -->
+    <div class="bg-gray-50 rounded-lg p-4 space-y-2">
+      <p class="text-xs">質問</p>
+      <p class="text-sm leading-relaxed">
+        回答した内容を表示します。<br>
+        質問1<br>
+        質問2<br>
+        質問3<br>
+        質問4<br>
+        質問5
+      </p>
+    </div>
+
+    <!-- ジャーナリング入力内容を追加 -->
+    <div class="bg-gray-50 rounded-lg p-4 space-y-2">
+      <p class="text-xs">ジャーナリング</p>
+      <p class="text-sm">
+        入力した内容を表示します。
+      </p>
+    </div>
+
+    <!-- アイテム編集・削除・一覧に遷移するボタン -->
+    <div class="flex flex-col items-center sm:flex-row sm:justify-center gap-4 sm:gap-6 pt-5 border-t">
+      <%= link_to "編集する", "#", class: "btn-base w-fit px-4 min-w-[110px]" %>
+
+      <%= link_to "削除する", "#",
+          data: { turbo_method: :delete, turbo_confirm: "本当に削除しますか？" },
+          class: "btn-base w-fit px-4 min-w-[110px]" %>
+
+      <%= link_to "一覧に戻る", items_path, class: "btn btn-outline w-fit px-4 min-w-[110px]" %>
+    </div>
+  </div>
+</div>

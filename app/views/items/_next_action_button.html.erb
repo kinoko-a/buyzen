@@ -1,0 +1,3 @@
+<% if item.next_action.present? %>
+  <%= link_to item.next_action[:label], item.next_action[:path], class: "btn-base" %>
+<% end %>
