@@ -2,9 +2,16 @@ ja:
   activerecord:
     models:
       user: ユーザー
+      item: 商品
     attributes:
       user:
         name: ユーザー名
         email: メールアドレス
         password: パスワード
         password_confirmation: パスワード(確認)
+    enums:
+      item:
+        cooldown_duration:
+          minutes_30: "30分"
+          hours_24:   "24時間"
+          days_3:     "3日"

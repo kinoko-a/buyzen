@@ -16,9 +16,17 @@ class ItemsController < ApplicationController
     redirect_to items_path, alert: "アイテムが見つかりません"
   end
 
-  def new;end
+  def new
+    @item = Item.new
+  end
 
-  def create;end
+  def create
+    # if params[cooldown_choice] == 'skip'
+    #   @item.skip_cooldown!
+    # else
+    #   @item.cooldown_duration = params[:cooldown_choice]
+    # end
+  end
 
   def update;end
 

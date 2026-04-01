@@ -7,6 +7,7 @@ class Item < ApplicationRecord
 
   belongs_to :user
 
+  # アイテムのステータスを確認
   def cooldown_not_selected?
     cooldown_duration.nil? && cooldown_until.nil?
   end
@@ -32,6 +33,7 @@ class Item < ApplicationRecord
     decided_buy? || decided_skip?
   end
 
+  # ステータスごとに、次のステップを表示
   def next_action
     case status
     when "thinking"
@@ -54,5 +56,18 @@ class Item < ApplicationRecord
         "ジャーナリングと購入判断に進むことができます"
       end
     end
+  end
+
+  # クールダウンタイマーの時間選択
+  def cooldown_options_for_select
+    self.class.cooldown_durations.keys.map do |key|
+      [ I18n.t("activerecord.enums.item.cooldown_duration.#{key}"), key ]
+    end
+  end
+
+  # クールダウンタイマーをスキップ(今回は設定しない)
+  def skip_cooldown!
+    self.cooldown_until = Time.current
+    self.cooldown_duration = nil
   end
 end
