@@ -4,10 +4,11 @@
 
     <div class="max-w-xl mx-4">
       <%= form_with model: @item, local: true do |f| %>
+      <%= render "shared/error_messages", object: f.object %>
         <!-- アイテム名 -->
-        <div class="mb-8">
+        <div class="mb-8 mt-4">
           <%= f.label :name, "アイテム名", class: "block text-sm font-medium mb-2" %>
-          <%= f.text_field :name, autofocus: true, class: "input input-bordered w-full focus:outline-none" %>
+          <%= f.text_field :name, class: "input input-bordered w-full focus:outline-none" %>
         </div>
 
         <!-- メモ -->
@@ -24,13 +25,15 @@
           </div>
 
           <!-- カード -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mx-3">
             <% (@item.cooldown_options_for_select + [["今回は設定しない", "skip"]]).each do |label, value| %>
 
               <label class="cursor-pointer group">
-                <%= radio_button_tag "cooldown_choice", value, false, class: "hidden peer" %>
+                <%= radio_button_tag "cooldown_choice", value,
+                  (params[:cooldown_choice] == value),
+                  class: "hidden peer" %>
 
-                <div class="border rounded-xl pl-6 py-5 flex items-center justify-between
+                <div class="border rounded-xl pl-6 py-4 flex items-center justify-between
                             hover:bg-gray-100 transition
                             peer-checked:border-accent peer-checked:ring-2 peer-checked:ring-accent">
 
@@ -52,8 +55,8 @@
 
         <!-- ボタン -->
         <div class="flex flex-col items-center gap-4 mt-15">
-          <%= f.submit "登録する", class: "btn-base btn-lg sm:w-auto min-w-[140px]" %>
-          <%= link_to "キャンセル", root_path, class: "btn btn-outline btn-lg w-fit sm:w-auto min-w-[140px]" %>
+          <%= f.submit "登録する", class: "btn-base sm:w-auto min-w-[140px]" %>
+          <%= link_to "キャンセル", root_path, class: "btn btn-outline w-fit sm:w-auto min-w-[140px]" %>
         </div>
       <% end %>
     </div>

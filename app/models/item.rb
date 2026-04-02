@@ -1,6 +1,7 @@
 class Item < ApplicationRecord
   validates :name, presence: true, length: { maximum: 255 }
   validates :note, length: { maximum: 65_535 }
+  validate :cooldown_choice_valid
 
   enum :status, { thinking: 0, decided_buy: 1, decided_skip: 2 }
   enum :cooldown_duration, { minutes_30: 0, hours_24: 1, days_3: 2 }
@@ -69,5 +70,13 @@ class Item < ApplicationRecord
   def skip_cooldown!
     self.cooldown_until = Time.current
     self.cooldown_duration = nil
+  end
+
+  private
+
+  def cooldown_choice_valid
+    if cooldown_duration.blank? && cooldown_until.blank?
+      errors.add(:cooldown_duration, "を選択してください")
+    end
   end
 end

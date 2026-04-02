@@ -9,6 +9,10 @@ ja:
         email: メールアドレス
         password: パスワード
         password_confirmation: パスワード(確認)
+      item:
+        name: アイテム名
+        note: メモ
+        cooldown_duration: クールダウンの期間
     enums:
       item:
         cooldown_duration:
