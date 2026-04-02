@@ -11,9 +11,9 @@ class ItemsController < ApplicationController
 
   def show
     @item = Item.find(params[:id])
-    redirect_to items_path, alert: "アイテムが見つかりません" unless @item.user == current_user
+    redirect_to items_path, alert: t("flash.items.not_found") unless @item.user == current_user
   rescue ActiveRecord::RecordNotFound
-    redirect_to items_path, alert: "アイテムが見つかりません"
+    redirect_to items_path, alert: t("flash.items.not_found")
   end
 
   def new
@@ -58,7 +58,15 @@ class ItemsController < ApplicationController
     end
   end
 
-  def destroy;end
+  def destroy
+    item = current_user.items.find(params[:id])
+    item.destroy!
+    redirect_to items_path, success: t("flash.items.destroy.success")
+  rescue ActiveRecord::RecordNotFound
+    redirect_to items_path, alert: t("flash.items.not_found")
+  rescue ActiveRecord::RecordNotDestroyed
+    redirect_to item_path(item), alert: t("flash.items.destroy.failure")
+  end
 
   private
 
