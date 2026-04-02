@@ -1,6 +1,6 @@
 ja:
   defaults:
-    delete_confirm: 削除しますか？"
+    delete_confirm: "本当に削除しますか？"
   flash:
     items:
       create:
@@ -11,3 +11,5 @@ ja:
         failure: "更新できませんでした"
       destroy:
         success: "削除しました"
+        failure: "削除できませんでした"
+      not_found: "アイテムが見つかりません"

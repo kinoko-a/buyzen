@@ -2,7 +2,7 @@ Rails.application.routes.draw do
   devise_for :users
   root "static_pages#top"
   resource :dashboards, only: [ :show ]
-  resources :items, only: %i[index show new create edit update]
+  resources :items, only: %i[index show new create edit update destroy]
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
