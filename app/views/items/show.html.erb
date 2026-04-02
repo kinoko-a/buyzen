@@ -1,9 +1,9 @@
 <div class="max-w-3xl mx-auto my-8 px-4">
   <div class="bg-white rounded-xl shadow px-6 py-10 space-y-6">
 
-    <!-- アイテム名 + 次できるアクションに遷移するボタン -->
-    <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+    <div class="flex flex-row items-start justify-between gap-3">
       <div class="flex flex-col gap-2">
+        <!-- アイテム名 -->
         <h1 class="text-2xl sm:text-3xl font-bold leading-tight">
           <%= @item.name %>
         </h1>
@@ -13,6 +13,8 @@
           <%= render 'items/status_badge', item: @item %>
         </div>
       </div>
+
+      <!-- 次できるアクションに遷移するボタン -->
       <div class="self-start sm:self-auto">
         <%= render 'items/next_action_button', item: @item %>
       </div>
@@ -38,17 +40,17 @@
 
     <!-- メモ + 質問回答 + ジャーナリング内容 -->
     <div class="bg-gray-50 rounded-lg p-4 space-y-2">
-      <p class="text-xs">メモ</p>
-      <p class="text-sm">
+      <p class="text-xs font-bold opacity-90">メモ</p>
+      <div class="text-sm leading-relaxed">
         <% if @item.note.present? %>
-          <%= @item.note %>
+          <%= simple_format(@item.note) %>
         <% end %>
-      </p>
+      </div>
     </div>
 
     <!-- 質問回答を追加 -->
     <div class="bg-gray-50 rounded-lg p-4 space-y-2">
-      <p class="text-xs">質問</p>
+      <p class="text-xs font-bold opacity-90">質問</p>
       <p class="text-sm leading-relaxed">
         回答した内容を表示します。<br>
         質問1<br>
@@ -61,14 +63,14 @@
 
     <!-- ジャーナリング入力内容を追加 -->
     <div class="bg-gray-50 rounded-lg p-4 space-y-2">
-      <p class="text-xs">ジャーナリング</p>
+      <p class="text-xs font-bold opacity-90">ジャーナリング</p>
       <p class="text-sm">
         入力した内容を表示します。
       </p>
     </div>
 
     <!-- アイテム編集・削除・一覧に遷移するボタン -->
-    <div class="flex flex-col items-center sm:flex-row sm:justify-center gap-4 sm:gap-6 pt-5 border-t">
+    <div class="flex flex-col items-center sm:flex-row sm:justify-center gap-4 sm:gap-6 pt-6 border-t">
       <%= link_to "編集する", "#", class: "btn-base w-fit px-4 min-w-[110px]" %>
 
       <%= link_to "削除する", "#",
