@@ -12,12 +12,12 @@
       <div class="space-y-5">
         <div>
           <%= f.label :name, class: "block text-sm font-normal" %>
-          <%= f.text_field :name, placeholder: t("placeholders.user.name"), autofocus: true, autocomplete: "name", class: "input input-bordered w-full focus:outline-none focus:ring-1 focus:ring-primary/30" %>
+          <%= f.text_field :name, autocomplete: "name", class: "input input-bordered w-full focus:outline-none focus:ring-1 focus:ring-primary/30" %>
         </div>
 
         <div>
           <%= f.label :email, class: "block text-sm font-normal" %>
-          <%= f.email_field :email, placeholder: t("placeholders.user.email"), autocomplete: "email", class: "input input-bordered w-full focus:outline-none focus:ring-1 focus:ring-primary/30" %>
+          <%= f.email_field :email, autocomplete: "email", class: "input input-bordered w-full focus:outline-none focus:ring-1 focus:ring-primary/30" %>
         </div>
 
         <div>
@@ -25,12 +25,12 @@
             <%= f.label :password, class: "block text-sm font-normal" %>
             <p class="text-xs opacity-80 mt-0.5 ml-3">6文字以上で、英数字を混ぜて入力してください</p>
           </div>
-          <%= f.password_field :password, placeholder: t("placeholders.user.password"), autocomplete: "new-password", class: "input input-bordered w-full focus:outline-none focus:ring-1 focus:ring-primary/30" %>
+          <%= f.password_field :password, autocomplete: "new-password", class: "input input-bordered w-full focus:outline-none focus:ring-1 focus:ring-primary/30" %>
         </div>
 
         <div>
           <%= f.label :password_confirmation, class: "block text-sm font-normal" %>
-          <%= f.password_field :password_confirmation, placeholder: t("placeholders.user.password_confirmation"), autocomplete: "new-password", class: "input input-bordered w-full focus:outline-none focus:ring-1 focus:ring-primary/30" %>
+          <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "input input-bordered w-full focus:outline-none focus:ring-1 focus:ring-primary/30" %>
         </div>
 
         <div class="pt-4 text-center">
