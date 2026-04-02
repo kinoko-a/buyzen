@@ -1,0 +1,18 @@
+<div class="max-w-3xl mx-auto my-8 px-4">
+  <div class="bg-white rounded-xl shadow px-10 py-9 space-y-6">
+    <h1 class="text-xl font-bold mt-2 mb-9 text-center">登録内容を編集する</h1>
+
+    <%= form_with model: @item, local: true do |f| %>
+      <%= render "shared/error_messages", object: f.object %>
+
+      <!-- 商品名・メモ -->
+      <%= render 'items/item_basic_form', f: f %>
+
+      <!-- ボタン -->
+      <div class="flex flex-col items-center gap-4 mt-15 mb-3">
+        <%= f.submit "編集する", class: "btn-base sm:w-auto min-w-[140px]" %>
+        <%= link_to "キャンセル", item_path(@item), class: "btn btn-outline w-fit sm:w-auto min-w-[140px]" %>
+      </div>
+    <% end %>
+  </div>
+</div>

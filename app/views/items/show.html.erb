@@ -71,7 +71,7 @@
 
     <!-- アイテム編集・削除・一覧に遷移するボタン -->
     <div class="flex flex-col items-center sm:flex-row sm:justify-center gap-4 sm:gap-6 pt-6 border-t">
-      <%= link_to "編集する", "#", class: "btn-base w-fit px-4 min-w-[110px]" %>
+      <%= link_to "編集する", edit_item_path(@item), class: "btn-base w-fit px-4 min-w-[110px]" %>
 
       <%= link_to "削除する", "#",
           data: { turbo_method: :delete, turbo_confirm: "本当に削除しますか？" },

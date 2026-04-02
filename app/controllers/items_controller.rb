@@ -44,9 +44,19 @@ class ItemsController < ApplicationController
     end
   end
 
-  def update;end
+  def edit
+    @item = current_user.items.find(params[:id])
+  end
 
-  def edit;end
+  def update
+    @item = current_user.items.find(params[:id])
+    if @item.update(item_params)
+      redirect_to @item, success: t("flash.items.update.success")
+    else
+      flash.now[:alert] = t("flash.items.update.failure")
+      render :edit, status: :unprocessable_entity
+    end
+  end
 
   def destroy;end
 
