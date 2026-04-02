@@ -8,5 +8,5 @@ ja:
   flash:
     items:
       create:
-        success: "アイテムを登録しました"
-        failure: "アイテムを登録できませんでした"
+        success: "登録しました"
+        failure: "登録できませんでした"

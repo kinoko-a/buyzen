@@ -4,7 +4,7 @@
   <div class="flex items-center justify-between">
     <h1 class="text-2xl md:text-3xl font-bold">ダッシュボード</h1>
 
-    <%= link_to '＋ アイテム登録', new_item_path, class: "btn-base btn-xl text-lg" %>
+    <%= link_to '＋ 登録', new_item_path, class: "btn-base btn-xl text-lg" %>
   </div>
 
   <!-- サマリーカード -->
@@ -12,21 +12,21 @@
 
     <div class="card-base">
       <div class="card-body">
-        <h2 class="card-title text-sm">考え中</h2>
+        <h2 class="card-title text-sm">検討中</h2>
         <p class="text-2xl font-bold">5</p>
       </div>
     </div>
 
     <div class="card-base">
       <div class="card-body">
-        <h2 class="card-title text-sm">買った</h2>
+        <h2 class="card-title text-sm">買う</h2>
         <p class="text-2xl font-bold">2</p>
       </div>
     </div>
 
     <div class="card-base">
       <div class="card-body">
-        <h2 class="card-title text-sm">買わなかった</h2>
+        <h2 class="card-title text-sm">買わない</h2>
         <p class="text-2xl font-bold">3</p>
       </div>
     </div>
@@ -38,7 +38,7 @@
     <div class="card-body">
 
       <div class="flex items-center justify-between mb-4">
-        <h2 class="card-title">最近のアイテム</h2>
+        <h2 class="card-title">最近気になったもの</h2>
         <%= link_to "すべて見る", items_path, class: "btn btn-outline" %>
       </div>
 
@@ -82,11 +82,8 @@
       </h2>
 
       <div class="flex flex-col sm:flex-row justify-center gap-8">
-        <%= link_to '＋ アイテム登録', new_item_path, class: "btn-base btn-xl text-lg" %>
-
-        <button class="btn btn-outline btn-xl text-lg">
-          考える時間を作る
-        </button>
+        <%= link_to '＋ 気になる登録', new_item_path, class: "btn-base btn-xl text-lg min-w-[180px]" %>
+        <%= link_to 'リストを確認', items_path, class: "btn btn-outline btn-xl text-lg min-w-[180px]" %>
       </div>
 
     </div>

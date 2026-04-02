@@ -2,7 +2,7 @@ ja:
   activerecord:
     models:
       user: ユーザー
-      item: 商品
+      item: 気になるもの
     attributes:
       user:
         name: ユーザー名
@@ -10,7 +10,7 @@ ja:
         password: パスワード
         password_confirmation: パスワード(確認)
       item:
-        name: アイテム名
+        name: 商品名
         note: メモ
         cooldown_duration: クールダウンの期間
     enums:
