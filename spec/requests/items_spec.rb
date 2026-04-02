@@ -4,42 +4,19 @@ RSpec.describe "Items", type: :request do
   let(:user) { create(:user) }
   let!(:item) { create(:item, :skip_cooldown, user: user) }
 
-  describe "GET /items" do
-    context "ログイン後" do
-      before { sign_in user }
+  describe "ログイン済みの場合" do
+    before { sign_in user }
 
+    describe "GET /items" do
       it "アイテム一覧画面に遷移できる" do
         get items_path
         expect(response).to have_http_status(:success)
       end
 
-      it "アイテム詳細画面に遷移できる" do
-        get item_path(item)
-        expect(response).to have_http_status(:success)
-      end
-
-      it "アイテム登録画面に遷移できる" do
-        get new_item_path
-        expect(response).to have_http_status(:success)
-      end
-
-      it "アイテムが表示される" do
-        get items_path
-        expect(response.body).to include(item.name)
-        get item_path(item)
-        expect(response.body).to include(item.name)
-      end
-
-      it "存在しないIDの場合リダイレクトされる" do
-        get item_path(999999)
-        expect(response).to redirect_to(items_path)
-      end
-
-      it "アイテム一覧に他人のアイテムを表示しない" do
+      it "アイテム一覧に自分のアイテムのみ表示される" do
         my_item = build(:item, user: user, name: "自分のアイテム")
         my_item.skip_cooldown!
         my_item.save!
-
         other_user = create(:user)
         other_item = build(:item, user: other_user, name: "他人のアイテム")
         other_item.skip_cooldown!
@@ -47,10 +24,18 @@ RSpec.describe "Items", type: :request do
 
         get items_path
         expect(response.body).to include("自分のアイテム")
-        expect(response.body).not_to include(other_item.name)
+        expect(response.body).not_to include("他人のアイテム")
+      end
+    end
+
+    describe "GET /items/:id" do
+      it "アイテム詳細画面に遷移できる" do
+        get item_path(item)
+        expect(response).to have_http_status(:success)
+        expect(response.body).to include(item.name)
       end
 
-      it "他人のアイテム詳細にはアクセスできない" do
+      it "他人のアイテム詳細画面にはアクセスできない" do
         other_user = create(:user)
         other_item = build(:item, user: other_user, name: "他人のアイテム")
         other_item.skip_cooldown!
@@ -60,6 +45,20 @@ RSpec.describe "Items", type: :request do
         expect(response).to redirect_to(items_path)
       end
 
+      it "存在しないIDの場合リダイレクトされる" do
+        get item_path(999999)
+        expect(response).to redirect_to(items_path)
+      end
+    end
+
+    describe "GET /items/new" do
+      it "アイテム登録画面に遷移できる" do
+        get new_item_path
+        expect(response).to have_http_status(:success)
+      end
+    end
+
+    describe "PATCH /items/:id" do
       it "自分のアイテムを更新できる" do
         patch item_path(item), params: {
           item: { name: "更新後アイテム" }
@@ -78,7 +77,7 @@ RSpec.describe "Items", type: :request do
 
       it "他人のアイテムは更新できない" do
         other_user = create(:user)
-        other_item = create(:item, :skip_cooldown, user: other_user)
+        other_item = build(:item, user: other_user, name: "他人のアイテム")
         other_item.skip_cooldown!
         other_item.save!
 
@@ -91,21 +90,49 @@ RSpec.describe "Items", type: :request do
       end
     end
 
-    context "ログイン前" do
-      it "アイテム一覧画面に遷移できない" do
-        get items_path
-        expect(response).to redirect_to(new_user_session_path)
+    describe "DELETE /items/:id" do
+      it "自分のアイテムを削除できる" do
+        expect {
+          delete item_path(item)
+        }.to change(Item, :count).by(-1)
+        expect(response).to redirect_to(items_path)
       end
 
-      it "アイテム詳細画面に遷移できない" do
-        get item_path(item)
-        expect(response).to redirect_to(new_user_session_path)
+      it "他人のアイテムは削除できない" do
+        other_user = create(:user)
+        other_item = build(:item, user: other_user, name: "他人のアイテム")
+        other_item.skip_cooldown!
+        other_item.save!
+
+        expect {
+          delete item_path(other_item)
+        }.not_to change(Item, :count)
+        expect(response).to redirect_to(items_path)
       end
 
-      it "アイテム登録画面に遷移できない" do
-        get new_item_path
-        expect(response).to redirect_to(new_user_session_path)
+      it "存在しないIDはリダイレクトされる" do
+        expect {
+          delete item_path(999999)
+        }.not_to change(Item, :count)
+        expect(response).to redirect_to(items_path)
       end
+    end
+  end
+
+  describe "ログイン前の場合" do
+    it "アイテム一覧画面にアクセスできない" do
+      get items_path
+      expect(response).to redirect_to(new_user_session_path)
+    end
+
+    it "アイテム詳細画面にアクセスできない" do
+      get item_path(item)
+      expect(response).to redirect_to(new_user_session_path)
+    end
+
+    it "アイテム登録画面にアクセスできない" do
+      get new_item_path
+      expect(response).to redirect_to(new_user_session_path)
     end
   end
 end
