@@ -7,5 +7,9 @@ FactoryBot.define do
     trait :with_name do
       sequence(:name) { |n| "テストアイテム#{n}" }
     end
+
+    trait :skip_cooldown do
+      after(:build) { |item| item.skip_cooldown! }
+    end
   end
 end
