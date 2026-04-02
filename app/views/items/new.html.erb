@@ -1,0 +1,64 @@
+<div class="max-w-2xl mx-auto my-8 px-4">
+  <div class="bg-white rounded-xl shadow p-6 space-y-6">
+    <h1 class="text-2xl font-bold mt-5 mb-8 text-center">気になるものを登録</h1>
+
+    <div class="max-w-xl mx-4">
+      <%= form_with model: @item, local: true do |f| %>
+      <%= render "shared/error_messages", object: f.object %>
+        <!-- アイテム名 -->
+        <div class="mb-8 mt-4">
+          <%= f.label :name, "商品名", class: "block text-sm font-medium mb-2" %>
+          <%= f.text_field :name, class: "input input-bordered w-full focus:outline-none" %>
+        </div>
+
+        <!-- メモ -->
+        <div class="mb-8">
+          <%= f.label :note, "メモ（任意）", class: "block text-sm font-medium mb-2" %>
+          <%= f.text_area :note, rows: 4, class: "textarea textarea-bordered w-full focus:outline-none" %>
+        </div>
+
+        <!-- クールダウンタイマー -->
+        <div class="mb-12">
+          <div class="mb-3">
+            <p class="text-sm font-medium">クールダウンタイマー</p>
+            <p class="text-xs mt-1">※登録後に通知方法を設定できます</p>
+          </div>
+
+          <!-- カード -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mx-3">
+            <% (@item.cooldown_options_for_select + [["今回は設定しない", "skip"]]).each do |label, value| %>
+
+              <label class="cursor-pointer group">
+                <%= radio_button_tag "cooldown_choice", value,
+                  (params[:cooldown_choice] == value),
+                  class: "hidden peer" %>
+
+                <div class="border rounded-xl pl-6 py-4 flex items-center justify-between
+                            hover:bg-gray-100 transition
+                            peer-checked:border-accent peer-checked:ring-2 peer-checked:ring-accent">
+
+                  <div class="flex items-center gap-2">
+                    <!-- 未選択 -->
+                    <ion-icon name="radio-button-off-outline"
+                              class="text-xl group-has-[input:checked]:hidden"></ion-icon>
+                    <!-- 選択 -->
+                    <ion-icon name="radio-button-on-outline"
+                              class="text-xl hidden group-has-[input:checked]:inline text-accent"></ion-icon>
+
+                    <span class="text-sm"><%= label %></span>
+                  </div>
+                </div>
+              </label>
+            <% end %>
+          </div>
+        </div>
+
+        <!-- ボタン -->
+        <div class="flex flex-col items-center gap-4 mt-15 mb-3">
+          <%= f.submit "登録する", class: "btn-base sm:w-auto min-w-[140px]" %>
+          <%= link_to "キャンセル", root_path, class: "btn btn-outline w-fit sm:w-auto min-w-[140px]" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

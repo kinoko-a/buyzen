@@ -2,9 +2,20 @@ ja:
   activerecord:
     models:
       user: ユーザー
+      item: 気になるもの
     attributes:
       user:
         name: ユーザー名
         email: メールアドレス
         password: パスワード
         password_confirmation: パスワード(確認)
+      item:
+        name: 商品名
+        note: メモ
+        cooldown_duration: クールダウンの期間
+    enums:
+      item:
+        cooldown_duration:
+          minutes_30: "30分"
+          hours_24:   "24時間"
+          days_3:     "3日"

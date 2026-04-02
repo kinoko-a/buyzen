@@ -1,0 +1,19 @@
+<% if object.errors.any? %>
+  <div class="alert alert-error alert-soft border border-error/30">
+    <div class="flex items-start gap-2">
+      <ion-icon name="alert-circle" class="w-6 h-6"></ion-icon>
+
+      <div>
+        <p class="font-medium mb-1">
+          入力内容をご確認ください
+        </p>
+
+        <ul class="text-sm space-y-1">
+          <% object.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  </div>
+<% end %>

@@ -5,3 +5,8 @@ ja:
       email: mail@example.com
       password: パスワード
       password_confirmation: パスワード(確認)
+  flash:
+    items:
+      create:
+        success: "登録しました"
+        failure: "登録できませんでした"
