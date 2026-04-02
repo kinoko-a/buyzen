@@ -4,18 +4,10 @@
 
     <div class="max-w-xl mx-4">
       <%= form_with model: @item, local: true do |f| %>
-      <%= render "shared/error_messages", object: f.object %>
-        <!-- アイテム名 -->
-        <div class="mb-8 mt-4">
-          <%= f.label :name, "商品名", class: "block text-sm font-medium mb-2" %>
-          <%= f.text_field :name, class: "input input-bordered w-full focus:outline-none" %>
-        </div>
+        <%= render "shared/error_messages", object: f.object %>
 
-        <!-- メモ -->
-        <div class="mb-8">
-          <%= f.label :note, "メモ（任意）", class: "block text-sm font-medium mb-2" %>
-          <%= f.text_area :note, rows: 4, class: "textarea textarea-bordered w-full focus:outline-none" %>
-        </div>
+        <!-- 商品名・メモ -->
+        <%= render 'items/item_basic_form', f: f %>
 
         <!-- クールダウンタイマー -->
         <div class="mb-12">

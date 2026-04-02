@@ -1,12 +1,13 @@
 ja:
-  placeholders:
-    user:
-      name: ユーザー名
-      email: mail@example.com
-      password: パスワード
-      password_confirmation: パスワード(確認)
+  defaults:
+    delete_confirm: 削除しますか？"
   flash:
     items:
       create:
         success: "登録しました"
         failure: "登録できませんでした"
+      update:
+        success: "更新しました"
+        failure: "更新できませんでした"
+      destroy:
+        success: "削除しました"
