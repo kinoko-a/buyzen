@@ -59,6 +59,36 @@ RSpec.describe "Items", type: :request do
         get item_path(other_item)
         expect(response).to redirect_to(items_path)
       end
+
+      it "自分のアイテムを更新できる" do
+        patch item_path(item), params: {
+          item: { name: "更新後アイテム" }
+        }
+
+        expect(item.reload.name).to eq "更新後アイテム"
+      end
+
+      it "更新後はアイテム詳細画面にリダイレクトされる" do
+        patch item_path(item), params: {
+          item: { name: "更新後アイテム" }
+        }
+
+        expect(response).to redirect_to(item_path(item))
+      end
+
+      it "他人のアイテムは更新できない" do
+        other_user = create(:user)
+        other_item = create(:item, :skip_cooldown, user: other_user)
+        other_item.skip_cooldown!
+        other_item.save!
+
+        patch item_path(other_item), params: {
+          item: { name: "不正更新" }
+        }
+
+        expect(other_item.reload.name).not_to eq "不正更新"
+        expect(response).to have_http_status(:not_found)
+      end
     end
 
     context "ログイン前" do
