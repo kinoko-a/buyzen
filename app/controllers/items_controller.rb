@@ -1,5 +1,6 @@
 class ItemsController < ApplicationController
   before_action :authenticate_user!
+  before_action :prevent_access_after_decision, only: [:purchase_decision]
 
   def index
     @items = current_user.items.order(created_at: :desc)
@@ -93,7 +94,7 @@ class ItemsController < ApplicationController
 
       if status_params.blank?
         # バリデーションエラー(購入判断完了時は「買う・買わない」の選択が必要)
-        @item.errors.add(:status, "「買う」「買わない」のどちらかを選択してください")
+        @item.errors.add(:status, t("flash.items.decide.validation.status_required"))
         build_journal_from_params
         flash.now[:alert] = t("flash.items.decide.failure")
         render :purchase_decision, status: :unprocessable_entity
@@ -164,6 +165,14 @@ class ItemsController < ApplicationController
     @journal = Journal.new(
       content: journal_content
     )
+  end
+
+  # 購入判断済みの場合はリダイレクト
+  def prevent_access_after_decision
+    @item = current_user.items.find(params[:id])
+    if @item.decided?
+      redirect_to item_path(@item), alert: t("flash.items.decide.access_denied.after_decision")
+    end
   end
 
   def item_params
