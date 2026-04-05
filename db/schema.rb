@@ -10,14 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_05_122343) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_05_125538) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
   create_table "answers", force: :cascade do |t|
     t.integer "choice"
     t.datetime "created_at", null: false
-    t.boolean "is_draft"
+    t.boolean "is_draft", default: true, null: false
     t.bigint "item_id", null: false
     t.bigint "question_id", null: false
     t.datetime "updated_at", null: false
@@ -46,7 +46,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_05_122343) do
     t.text "content"
     t.datetime "created_at", null: false
     t.boolean "is_draft", default: true, null: false
-    t.bigint "item_id"
+    t.bigint "item_id", null: false
     t.datetime "updated_at", null: false
     t.index ["item_id"], name: "index_journals_on_item_id"
   end
