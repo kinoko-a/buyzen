@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_05_125538) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_05_144531) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -21,6 +21,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_05_125538) do
     t.bigint "item_id", null: false
     t.bigint "question_id", null: false
     t.datetime "updated_at", null: false
+    t.index ["item_id", "question_id"], name: "index_answers_on_item_id_and_question_id", unique: true
     t.index ["item_id"], name: "index_answers_on_item_id"
     t.index ["question_id"], name: "index_answers_on_question_id"
   end
@@ -56,7 +57,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_05_125538) do
     t.datetime "created_at", null: false
     t.integer "position", null: false
     t.datetime "updated_at", null: false
-    t.bigint "user_id", null: false
+    t.bigint "user_id"
+    t.index ["user_id", "position"], name: "index_questions_on_user_id_and_position", unique: true
     t.index ["user_id"], name: "index_questions_on_user_id"
   end
 
