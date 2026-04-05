@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_31_090420) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_02_155901) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -29,6 +29,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_31_090420) do
     t.index ["user_id"], name: "index_items_on_user_id"
   end
 
+  create_table "journals", force: :cascade do |t|
+    t.text "content"
+    t.datetime "created_at", null: false
+    t.boolean "is_draft", default: true, null: false
+    t.bigint "item_id"
+    t.datetime "updated_at", null: false
+    t.index ["item_id"], name: "index_journals_on_item_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email", default: "", null: false
@@ -43,4 +52,5 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_31_090420) do
   end
 
   add_foreign_key "items", "users"
+  add_foreign_key "journals", "items"
 end

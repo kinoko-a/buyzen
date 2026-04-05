@@ -1,4 +1,6 @@
 class Item < ApplicationRecord
+  before_update :set_decided_at
+
   validates :name, presence: true, length: { maximum: 255 }
   validates :note, length: { maximum: 65_535 }
   validate :cooldown_choice_valid
@@ -7,6 +9,7 @@ class Item < ApplicationRecord
   enum :cooldown_duration, { minutes_30: 0, hours_24: 1, days_3: 2 }
 
   belongs_to :user
+  has_many :journals, dependent: :destroy
 
   # アイテムのステータスを確認
   def cooldown_not_selected?
@@ -39,9 +42,9 @@ class Item < ApplicationRecord
     case status
     when "thinking"
       if cooldown_not_selected?
-        { label: "クールダウン設定", path: "#" }
+        { label: "クールダウン設定", type: :cooldown }
       elsif ready_for_decision?
-        { label: "判断する", path: "#" }
+        { label: "判断する", type: :decision }
       end
     end
   end
@@ -72,8 +75,17 @@ class Item < ApplicationRecord
     self.cooldown_duration = nil
   end
 
+  def latest_draft_journal
+    journals.where(is_draft: true).order(created_at: :desc).first
+  end
+
   private
 
+  def set_decided_at
+    self.decided_at = Time.current if decided? && decided_at.nil?
+  end
+
+  # アイテム登録時はクールダウン期間の選択が必要
   def cooldown_choice_valid
     if cooldown_duration.blank? && cooldown_until.blank?
       errors.add(:cooldown_duration, "を選択してください")

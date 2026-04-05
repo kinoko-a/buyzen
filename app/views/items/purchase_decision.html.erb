@@ -1,0 +1,114 @@
+<div class="max-w-3xl mx-auto my-8 px-4">
+  <div class="bg-white rounded-xl shadow px-8 py-10 space-y-11">
+    <h1 class="text-2xl font-bold mt-2 mb-9 text-center">購入を判断する</h1>
+
+    <!-- アイテム情報 -->
+    <div class="bg-base-200 rounded-lg opacity-90">
+      <div class="p-1 ml-2">
+        <p class="font-medium"><%= @item.name %></p>
+
+        <ion-icon name="calendar-outline" class="text-sm translate-y-[2px]"></ion-icon>
+        <span class="text-sm">
+          <%= @item.created_at.strftime("%Y/%-m/%-d") %>
+          <span class="mx-0.5"></span>
+          <%= @item.created_at.strftime("%-H:%M") %>に登録
+        </span>
+      </div>
+    </div>
+
+    <%= form_with model: @item, url: submit_decision_item_path(@item), method: :patch, local: true do |f| %>
+
+      <!-- 質問（任意回答） -->
+
+      <!-- ジャーナリング（任意回答） -->
+      <div class="space-y-2">
+        <h2 class="block text-sm font-medium mb-2">ジャーナリング（任意）</h2>
+        <p class="text-xs mt-1">
+          このアイテムを手にすることで、あなたの日常はどのように彩られますか？<br>
+          思いつくままに、浮かんできたことを書き出してみましょう。
+        </p>
+
+        <%= f.text_area "journal_content",
+            value: @journal&.content,
+            class: "textarea textarea-bordered w-full focus:outline-none" %>
+      </div>
+
+      <div class="border-t border-base-300 my-12"></div>
+
+      <!-- 購入判断 -->
+      <div class="space-y-4">
+        <p class="text-sm text-center">気持ちは決まりましたか？</p>
+
+        <div class="grid grid-cols-2 gap-6 max-w-xs mx-auto">
+
+          <!-- 買う -->
+          <label class="cursor-pointer group w-full">
+            <%= f.radio_button :status, "decided_buy", class: "hidden peer" %>
+
+            <div class="flex items-center gap-2 px-4 py-2 border border-accent rounded-lg
+                        text-lg
+                        peer-checked:border-accent peer-checked:bg-accent/20
+                        transition">
+
+              <ion-icon name="radio-button-off-outline"
+                        class="group-has-[input:checked]:hidden text-accent"></ion-icon>
+
+              <ion-icon name="radio-button-on-outline"
+                        class="hidden group-has-[input:checked]:inline text-accent"></ion-icon>
+
+              <span class="font-medium text-accent">買う</span>
+            </div>
+          </label>
+
+          <!-- 買わない -->
+          <label class="cursor-pointer group w-full">
+            <%= f.radio_button :status, "decided_skip", class: "hidden peer" %>
+
+            <div class="flex items-center gap-2 px-4 py-2 border border-info/90 rounded-lg
+                        text-lg
+                        peer-checked:border-info peer-checked:bg-info/20
+                        transition">
+
+              <ion-icon name="radio-button-off-outline"
+                        class="group-has-[input:checked]:hidden text-info"></ion-icon>
+
+              <ion-icon name="radio-button-on-outline"
+                        class="hidden group-has-[input:checked]:inline text-info"></ion-icon>
+
+              <span class="font-medium text-info">買わない</span>
+            </div>
+          </label>
+        </div>
+
+        <!-- 選択必須のメッセージ -->
+        <% if @item.errors[:status].any? %>
+          <div class="mt-5 flex justify-center">
+            <div class="bg-error/10 border border-error/30 text-error px-4 py-2 rounded-full text-sm font-medium">
+              <ion-icon name="alert-circle-outline" class="mr-1 text-lg translate-y-[3px]"></ion-icon>
+              <%= @item.errors[:status].first %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="border-t border-base-300 my-12"></div>
+
+      <!-- ボタン -->
+      <div class="flex flex-col items-center gap-6">
+        <button type="submit" name="commit_type" value="complete"
+                class="btn-base min-w-[160px]">
+          判断を完了する
+        </button>
+
+        <button type="submit" name="commit_type" value="draft"
+                class="btn-base opacity-60 text-white min-w-[160px]">
+          下書き保存
+        </button>
+
+        <%= link_to "保存せずに終了",
+          item_path(@item),
+          class: "btn btn-outline min-w-[160px]" %>
+      </div>
+    <% end %>
+  </div>
+</div>
