@@ -1,6 +1,6 @@
 class ItemsController < ApplicationController
   before_action :authenticate_user!
-  before_action :prevent_access_after_decision, only: [:purchase_decision]
+  before_action :prevent_access_after_decision, only: [ :purchase_decision ]
 
   def index
     @items = current_user.items.order(created_at: :desc)
