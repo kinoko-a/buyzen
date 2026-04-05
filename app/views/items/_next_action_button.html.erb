@@ -1,3 +1,14 @@
 <% if item.next_action.present? %>
-  <%= link_to item.next_action[:label], item.next_action[:path], class: "btn-base" %>
+  <% action = item.next_action %>
+
+  <% path =
+    case action[:type]
+    when :cooldown
+      "#"
+    when :decision
+      purchase_decision_item_path(item)
+    end
+  %>
+
+  <%= link_to action[:label], path, class: "btn-base" %>
 <% end %>

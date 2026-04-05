@@ -61,12 +61,16 @@
       </p>
     </div>
 
-    <!-- ジャーナリング入力内容を追加 -->
+    <!-- ジャーナリング -->
     <div class="bg-gray-50 rounded-lg p-4 space-y-2">
       <p class="text-xs font-bold opacity-90">ジャーナリング</p>
-      <p class="text-sm">
-        入力した内容を表示します。
-      </p>
+      <div class="text-sm leading-relaxed">
+        <% @item.journals.published.each do |journal| %>
+          <% if journal.content.present? %>
+            <%= simple_format(journal.content) %>
+          <% end %>
+        <% end %>
+      </div>
     </div>
 
     <!-- アイテム編集・削除・一覧に遷移するボタン -->

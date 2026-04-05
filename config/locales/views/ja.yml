@@ -13,3 +13,12 @@ ja:
         success: "削除しました"
         failure: "削除できませんでした"
       not_found: "アイテムが見つかりません"
+      decide:
+        success:
+          complete: "購入判断を保存しました。おつかれさまでした！"
+          draft: "下書きを保存しました"
+        failure: "保存できませんでした"
+        validation:
+          status_required: "「買う」「買わない」のどちらかを選択してください"
+        access_denied:
+          after_decision: "すでに購入判断は完了しています"
