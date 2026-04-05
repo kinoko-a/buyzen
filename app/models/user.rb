@@ -12,4 +12,5 @@ class User < ApplicationRecord
                        message: "は英数字を混ぜて入力してください" }
 
   has_many :items, dependent: :destroy
+  has_many :questions, dependent: :destroy
 end
