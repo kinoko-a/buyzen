@@ -1,6 +1,12 @@
 <div class="max-w-3xl mx-auto my-8 px-4">
   <div class="bg-white rounded-xl shadow px-8 py-10 space-y-11">
-    <h1 class="text-2xl font-bold mt-2 mb-9 text-center">購入を判断する</h1>
+    <div class="mt-2 mb-9 text-center">
+      <h1 class="text-2xl font-bold ">購入を判断する</h1>
+      <p class="text-sm mt-4">
+        もしよろしければ、質問を活用しながら<br>
+        買うかどうかを考えてみてください。
+      </p>
+    </div>
 
     <!-- アイテム情報 -->
     <div class="bg-base-200 rounded-lg opacity-90">
@@ -19,17 +25,89 @@
     <%= form_with model: @item, url: submit_decision_item_path(@item), method: :patch, local: true do |f| %>
 
       <!-- 質問（任意回答） -->
+      <h2 class="font-medium mb-5">質問から、気になった理由・買う理由を探してみる（任意）</h2>
+      <div class="space-y-4 mb-15 max-w-xl mx-auto">
+
+        <!-- 欲しい度 -->
+        <div class="space-y-2 text-center mb-8">
+          <p class="text-sm font-medium leading-relaxed">
+            どのくらい欲しいと感じますか？<br>
+            （1：欲しくない　～　5：とても欲しい）
+          </p>
+
+          <%= f.range_field :desire_level,
+            min: 1, max: 5, step: 1,
+            class: "range range-accent flex-1" %>
+
+          <div class="flex justify-between text-xs px-2 max-w-xs mx-auto">
+            <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
+          </div>
+        </div>
+
+        <!-- 今の気分 -->
+        <div class="space-y-2 text-center mb-5">
+          <p class="text-sm font-medium leading-relaxed">
+            今の気分はどうですか？<br>
+            （1：疲れている　～　5：元気）
+          </p>
+
+          <%= f.range_field :current_mood,
+              min: 1, max: 5, step: 1,
+              class: "range range-info w-full max-w-xs mx-auto" %>
+
+          <div class="flex justify-between text-xs px-2 max-w-xs mx-auto">
+            <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
+          </div>
+        </div>
+
+        <!-- 質問（8問） -->
+        <% @questions.each do |question| %>
+          <div class="bg-base-100 border rounded-lg p-3 text-center">
+
+            <p class="mb-3 text-sm font-medium">
+              <%= question.content %>
+            </p>
+
+            <div class="flex justify-center gap-2 max-w-xs mx-auto">
+              <div class="flex gap-5">
+                <% Answer.choices.keys.each do |key| %> <!-- Answer.choices.keysは["yes", "unknown", "no"] -->
+                  <% labels = { yes: "はい", unknown: "わからない", no: "いいえ" } %>
+                  <% label = labels[key.to_sym] %>
+
+                  <% checked = (@answers_map[question.id]&.choice == key) %> <!-- @answers_mapはユーザーの回答(例: "yes") -->
+
+                  <label class="cursor-pointer">
+                    <%= radio_button_tag "answers[#{question.id}][choice]", key,
+                        checked,
+                        class: "hidden peer" %>
+
+                    <%= hidden_field_tag "answers[#{question.id}][question_id]", question.id %>
+
+                    <div class="px-4 py-1 border rounded-full text-xs
+                                peer-checked:bg-primary peer-checked:text-white">
+                      <%= label %>
+                    </div>
+                  </label>
+                <% end %>
+              </div>
+            </div>
+
+          </div>
+        <% end %>
+      </div>
 
       <!-- ジャーナリング（任意回答） -->
       <div class="space-y-2">
-        <h2 class="block text-sm font-medium mb-2">ジャーナリング（任意）</h2>
-        <p class="text-xs mt-1">
+        <h2 class="block font-medium mt-10 mb-2">ジャーナリングで、購入判断のきっかけを引き出してみる（任意）</h2>
+        <p class="text-xs mt-1 leading-relaxed">
           このアイテムを手にすることで、あなたの日常はどのように彩られますか？<br>
-          思いつくままに、浮かんできたことを書き出してみましょう。
+          内容は良いことでも悪いことでも、短くても長くても大丈夫です。<br>
+          あなたの考えや欲しい理由など、思いつくままに浮かんできたことを書き出してみましょう。
         </p>
 
         <%= f.text_area "journal_content",
             value: @journal&.content,
+            rows:  6,
             class: "textarea textarea-bordered w-full focus:outline-none" %>
       </div>
 

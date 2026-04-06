@@ -10,6 +10,7 @@ class Item < ApplicationRecord
 
   belongs_to :user
   has_many :journals, dependent: :destroy
+  has_many :answers, dependent: :destroy
 
   # アイテムのステータスを確認
   def cooldown_not_selected?
