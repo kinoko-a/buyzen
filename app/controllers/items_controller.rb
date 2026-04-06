@@ -72,8 +72,23 @@ class ItemsController < ApplicationController
   # フォーム表示用
   def purchase_decision
     @item = current_user.items.find(params[:id])
-
     @journal = @item.latest_draft_journal || @item.journals.build
+    @questions = Question.where(user_id: nil).order(:position)
+    @answers_map = @item.answers.where(is_draft: true).index_by(&:question_id)
+
+    # フォーム送信後(paramsがある場合)は params 優先で上書き
+    if answers_params.present?
+      answers_params.each do |question_id_str, answer_param|
+        question_id = question_id_str.to_i
+        choice = answer_param["choice"]
+        next if choice.blank?
+
+        @answers_map[question_id] = Answer.new(
+          question_id: question_id,
+          choice: choice
+        )
+      end
+    end
   end
 
   # フォーム送信・保存用
@@ -95,16 +110,27 @@ class ItemsController < ApplicationController
       if status_params.blank?
         # バリデーションエラー(購入判断完了時は「買う・買わない」の選択が必要)
         @item.errors.add(:status, t("flash.items.decide.validation.status_required"))
+
+        @item.assign_attributes(item_params)
+
+        @questions = Question.where(user_id: nil).order(:position)
+        @answers_map = build_answers_from_params
+
         build_journal_from_params
+
         flash.now[:alert] = t("flash.items.decide.failure")
         render :purchase_decision, status: :unprocessable_entity
       else
         # バリデーションOK(購入判断「買う・買わない」を選択済み)
-        if @item.update(status: status_params)
+        if @item.update(status: status_params) # 登録成功
           finalize_journal
+          finalize_answers
           redirect_to dashboards_path, success: t("flash.items.decide.success.complete")
-        else
+        else # 登録失敗
+          @item.assign_attributes(item_params)
+          @answers_map = build_answers_from_params
           build_journal_from_params
+
           flash.now[:alert] = t("flash.items.decide.failure")
           render :purchase_decision, status: :unprocessable_entity
         end
@@ -121,6 +147,37 @@ class ItemsController < ApplicationController
 
   # 下書き保存
   def save_or_update_draft
+    save_item_draft_fields
+    save_answers_draft
+    save_journal_draft
+  end
+
+  def save_item_draft_fields
+    draft_attributes = {}
+    draft_attributes[:desire_level] = params.dig(:item, :desire_level) if params.dig(:item, :desire_level).present?
+    draft_attributes[:current_mood] = params.dig(:item, :current_mood) if params.dig(:item, :current_mood).present?
+
+    return if draft_attributes.empty?
+
+    @item.update!(draft_attributes)
+  end
+
+  def save_answers_draft
+    return if answers_params.blank?
+
+    answers_params.each do |_, answer_param|
+      next if answer_param[:choice].blank?
+
+      question_id = answer_param["question_id"]
+      answer = @item.answers.find_or_initialize_by(question_id: question_id)
+
+      answer.choice = answer_param[:choice]
+      answer.is_draft = true
+      answer.save!
+    end
+  end
+
+  def save_journal_draft
     return if journal_content.blank?
 
     draft_journal = @item.latest_draft_journal
@@ -137,7 +194,37 @@ class ItemsController < ApplicationController
     end
   end
 
+  # 購入判断完了ボタンをクリック後、失敗(バリデーションエラーまたは登録失敗)
+  def build_answers_from_params
+    return {} if answers_params.blank?
+
+    answers_map = {}
+
+    answers_params.each do |question_id_str, answer_param|
+      question_id = question_id_str.to_i
+      choice = answer_param["choice"]
+      next if choice.blank?
+
+      answers_map[question_id] = Answer.new(
+        question_id: question_id,
+        choice: choice
+      )
+    end
+
+    answers_map
+  end
+
+  def build_journal_from_params
+    @journal = Journal.new(
+      content: journal_content
+    )
+  end
+
   # 購入判断完了ボタンをクリック後、バリデーションOK
+  def finalize_answers
+    @item.answers.update_all(is_draft: false)
+  end
+
   def finalize_journal
     return if journal_content.blank?
 
@@ -161,12 +248,6 @@ class ItemsController < ApplicationController
     end
   end
 
-  def build_journal_from_params
-    @journal = Journal.new(
-      content: journal_content
-    )
-  end
-
   # 購入判断済みの場合はリダイレクト
   def prevent_access_after_decision
     @item = current_user.items.find(params[:id])
@@ -176,12 +257,19 @@ class ItemsController < ApplicationController
   end
 
   def item_params
+    # permit : 必須チェック(無いとエラー)
     params.require(:item).permit(
-      :name, :note, :cooldown_duration, :status, :journal_content
-      )
+      :name, :note, :cooldown_duration, :status, :desire_level, :current_mood
+    )
+  end
+
+  def answers_params
+    #  fetch : 無くてもデフォルト値{}を返すのでエラーにならない
+    params.fetch(:answers, {}).permit!.to_h
   end
 
   def journal_content
+    # dig : 無くてもnilを返すのでエラーにならない(ネストを安全に取得)
     params.dig(:item, :journal_content)
   end
 end
