@@ -20,7 +20,7 @@ default_questions = [
   "購入することであなたにとって良い影響がありますか？"
 ]
 
-questions.each_with_index do |content, position|
+default_questions.each_with_index do |content, position|
   question = Question.find_or_initialize_by(user_id: nil, position: position)
   question.content = content
   question.save!
