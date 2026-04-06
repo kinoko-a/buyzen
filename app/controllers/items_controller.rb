@@ -265,7 +265,9 @@ class ItemsController < ApplicationController
 
   def answers_params
     #  fetch : 無くてもデフォルト値{}を返すのでエラーにならない
-    params.fetch(:answers, {}).permit!.to_h
+    params.fetch(:answers, {}).transform_values do |answer|
+      answer.permit(:choice, :question_id)
+    end
   end
 
   def journal_content
