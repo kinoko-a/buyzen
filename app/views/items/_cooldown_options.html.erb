@@ -1,0 +1,40 @@
+<div class="mb-12">
+  <div class="mb-3">
+    <p class="text-sm font-medium">クールダウンタイマー</p>
+    <p class="text-xs mt-1">※登録後に通知方法を設定できます</p>
+  </div>
+
+  <!-- 画面遷移図のような見た目に変更。スキップ選択後の再設定時は、選択肢にスキップを表示しない。 -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mx-3">
+    <% options =
+      if @item.cooldown_skipped?
+        @item.cooldown_options_for_select
+      else
+        @item.cooldown_options_for_select + [["今回は設定しない", "skip"]]
+      end %>
+
+    <% options.each do |label, value| %>
+      <label class="cursor-pointer group">
+        <%= radio_button_tag "cooldown_choice", value,
+          (params[:cooldown_choice] == value),
+          class: "hidden peer" %>
+
+        <div class="border rounded-xl pl-6 py-4 flex items-center justify-between
+                    hover:bg-gray-100 transition
+                    peer-checked:border-accent peer-checked:ring-2 peer-checked:ring-accent">
+
+          <div class="flex items-center gap-2">
+            <!-- 未選択 -->
+            <ion-icon name="radio-button-off-outline"
+                      class="text-xl group-has-[input:checked]:hidden"></ion-icon>
+            <!-- 選択 -->
+            <ion-icon name="radio-button-on-outline"
+                      class="text-xl hidden group-has-[input:checked]:inline text-accent"></ion-icon>
+
+            <span class="text-sm"><%= label %></span>
+          </div>
+        </div>
+      </label>
+    <% end %>
+  </div>
+</div>

@@ -11,10 +11,20 @@
           <%= item.name %>
         </h2>
 
-        <!-- アイテム登録日 -->
-        <div class="text-sm mt-1">
-          <ion-icon name="calendar-outline" class="text-base translate-y-[2px]"></ion-icon>
-          <span><%= item.created_at.strftime("%Y/%-m/%-d") %>に登録</span>
+        <div class="flex text-sm mt-1 gap-4">
+          <!-- アイテム登録日 -->
+          <div class="flex gap-1">
+            <ion-icon name="calendar-outline" class="text-base translate-y-[2px]"></ion-icon>
+            <span><%= item.created_at.strftime("%Y/%-m/%-d") %>に登録</span>
+          </div>
+
+          <!-- クールダウンタイマー残り時間 -->
+          <div class="flex">
+            <% if item.cooldown_active? %>
+              <ion-icon name="hourglass-outline" class="text-base translate-y-[2px]"></ion-icon>
+              <p><%= item.remaining_time_text %></p>
+            <% end %>
+          </div>
         </div>
 
         <!-- ステータスバッジ + 次にできることを案内 -->

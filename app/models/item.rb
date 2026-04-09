@@ -1,5 +1,8 @@
 class Item < ApplicationRecord
+  include ActionView::Helpers::DateHelper
+
   before_update :set_decided_at
+  before_save :set_cooldown_until, if: :will_save_change_to_cooldown_duration?
 
   validates :name, presence: true, length: { maximum: 255 }
   validates :note, length: { maximum: 65_535 }
@@ -11,6 +14,11 @@ class Item < ApplicationRecord
   belongs_to :user
   has_many :journals, dependent: :destroy
   has_many :answers, dependent: :destroy
+
+  scope :cooldown_finished_unnotified, -> {
+    where("cooldown_until <= ?", Time.current)
+      .where(notified_at: nil)
+  }
 
   # アイテムのステータスを確認
   def cooldown_not_selected?
@@ -70,10 +78,68 @@ class Item < ApplicationRecord
     end
   end
 
+  # 設定したクールダウン期間・完了までの残り時間を表示
+  def cooldown_status_text
+    if cooldown_active?
+      "#{cooldown_duration_text}のクールダウン中 (#{remaining_time_text})"
+    elsif cooldown_skipped?
+      "クールダウンは設定されていません"
+    elsif cooldown_finished?
+      "#{cooldown_duration_text}のクールダウンが終わりました"
+    end
+  end
+
+  def cooldown_duration_text
+    I18n.t("activerecord.enums.item.cooldown_duration.#{cooldown_duration}") if cooldown_duration.present?
+  end
+
+  def remaining_time_text
+    return "" unless cooldown_until
+
+    seconds = (cooldown_until - Time.current).to_i
+    return "あと1分" if seconds < 60
+
+    days = (seconds / 1.day.to_f).ceil
+    hours = (seconds / 1.hour.to_f).ceil
+    minutes = (seconds / 1.minute.to_f).ceil
+
+    if seconds >= 1.days
+      # 24時間以上～3日以下 → 切り上げ日表示
+      "あと#{days}日"
+    elsif seconds >= 1.hour
+      # 1時間以上～24時間未満 → 切り上げ時間表示
+      "あと#{hours}時間"
+    else
+      # 1分以上～1時間未満 → 切り上げ分表示
+      "あと#{minutes}分"
+    end
+  end
+
+  # クールダウンタイマーの設定
+  # 現在時刻から指定した期間までの時間を取得
+  def set_cooldown_until
+    return if cooldown_duration.blank?
+
+    self.cooldown_until =
+      case cooldown_duration
+      when "minutes_30"
+        30.minutes.from_now
+      when "hours_24"
+        24.hours.from_now
+      when "days_3"
+        3.days.from_now
+      end
+  end
+
   # クールダウンタイマーをスキップ(今回は設定しない)
   def skip_cooldown!
     self.cooldown_until = Time.current
     self.cooldown_duration = nil
+  end
+
+  # クールダウンタイマー通知済みに変更
+  def mark_as_notified!
+    update!(notified_at: Time.current)
   end
 
   def latest_draft_journal

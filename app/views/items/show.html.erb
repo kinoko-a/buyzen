@@ -21,7 +21,8 @@
     </div>
 
     <!-- 日時情報 -->
-    <div class="text-md">
+    <div class="text-md leading-relaxed">
+      <!-- アイテム登録日時 -->
       <div class="flex gap-1">
         <ion-icon name="calendar-outline" class="text-base translate-y-[4px]"></ion-icon>
         <span>
@@ -31,10 +32,10 @@
         </span>
       </div>
 
-      <!-- クールダウンタイマー設定内容を追加 -->
+      <!-- クールダウンタイマー設定内容・残り時間 -->
       <div class="flex gap-1">
-        <ion-icon name="hourglass-outline" class="text-base translate-y-[4px]"></ion-icon>
-        <p>24時間のクールダウン中(あと3時間)</p>
+        <ion-icon name="hourglass-outline" class="text-base translate-y-[5px]"></ion-icon>
+        <p><%= @item.cooldown_status_text %></p>
       </div>
     </div>
 
