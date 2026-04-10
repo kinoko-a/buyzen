@@ -1,6 +1,8 @@
 class ItemsController < ApplicationController
   before_action :authenticate_user!
-  before_action :prevent_access_after_decision, only: [ :purchase_decision ]
+  before_action :set_item, only: [ :show, :edit, :update, :destroy, :purchase_decision, :submit_decision ]
+  before_action :ensure_ready_for_decision, only: [ :purchase_decision, :submit_decision ]
+  before_action :prevent_access_after_decision, only: [ :purchase_decision, :submit_decision ]
 
   def index
     @items = current_user.items.order(created_at: :desc)
@@ -10,12 +12,7 @@ class ItemsController < ApplicationController
     end
   end
 
-  def show
-    @item = Item.find(params[:id])
-    redirect_to items_path, alert: t("flash.items.not_found") unless @item.user == current_user
-  rescue ActiveRecord::RecordNotFound
-    redirect_to items_path, alert: t("flash.items.not_found")
-  end
+  def show; end
 
   def new
     @item = Item.new
@@ -45,12 +42,9 @@ class ItemsController < ApplicationController
     end
   end
 
-  def edit
-    @item = current_user.items.find(params[:id])
-  end
+  def edit; end
 
   def update
-    @item = current_user.items.find(params[:id])
     if @item.update(item_params)
       redirect_to item_path(@item), success: t("flash.items.update.success")
     else
@@ -60,18 +54,14 @@ class ItemsController < ApplicationController
   end
 
   def destroy
-    item = current_user.items.find(params[:id])
-    item.destroy!
+    @item.destroy!
     redirect_to items_path, success: t("flash.items.destroy.success")
-  rescue ActiveRecord::RecordNotFound
-    redirect_to items_path, alert: t("flash.items.not_found")
   rescue ActiveRecord::RecordNotDestroyed
-    redirect_to item_path(item), alert: t("flash.items.destroy.failure")
+    redirect_to item_path(@item), alert: t("flash.items.destroy.failure")
   end
 
   # フォーム表示用
   def purchase_decision
-    @item = current_user.items.find(params[:id])
     @journal = @item.latest_draft_journal || @item.journals.build
     @questions = Question.where(user_id: nil).order(:position)
     @answers_map = @item.answers.where(is_draft: true).index_by(&:question_id)
@@ -93,7 +83,6 @@ class ItemsController < ApplicationController
 
   # フォーム送信・保存用
   def submit_decision
-    @item = current_user.items.find(params[:id])
     commit_type = params[:commit_type]
 
     case commit_type
@@ -139,11 +128,6 @@ class ItemsController < ApplicationController
   end
 
   private
-
-  # クールダウンタイマー実装時に使用
-  def ensure_ready_for_decision
-    redirect_to items_path, alert: "まだ次のステップに進めません" unless @item.ready_for_decision?
-  end
 
   # 下書き保存
   def save_or_update_draft
@@ -248,12 +232,24 @@ class ItemsController < ApplicationController
     end
   end
 
-  # 購入判断済みの場合はリダイレクト
-  def prevent_access_after_decision
+  def set_item
     @item = current_user.items.find(params[:id])
-    if @item.decided?
-      redirect_to item_path(@item), alert: t("flash.items.decide.access_denied.after_decision")
-    end
+  rescue ActiveRecord::RecordNotFound
+    redirect_to items_path, alert: t("flash.items.not_found")
+  end
+
+  # クールダウン完了前は、購入判断画面に遷移できない
+  def ensure_ready_for_decision
+    return if @item.ready_for_decision?
+
+    redirect_to item_path(@item), alert: t("flash.items.decide.access_denied.cooldown_active")
+  end
+
+  # 購入判断完了後は、購入判断画面に遷移できない
+  def prevent_access_after_decision
+    return unless @item.decided?
+
+    redirect_to item_path(@item), alert: t("flash.items.decide.access_denied.after_decision")
   end
 
   def item_params

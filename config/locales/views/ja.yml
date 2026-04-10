@@ -21,4 +21,5 @@ ja:
         validation:
           status_required: "「買う」「買わない」のどちらかを選択してください"
         access_denied:
+          cooldown_active: "クールダウンが終わるまで、次のステップに進めません"
           after_decision: "すでに購入判断は完了しています"
