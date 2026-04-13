@@ -139,8 +139,13 @@ class Item < ApplicationRecord
 
   private
 
+  # 初回の購入判断後にdecided_atカラムを更新
   def set_decided_at
-    self.decided_at = Time.current if decided? && decided_at.nil?
+    return unless will_save_change_to_status?
+    return unless status_was == "thinking"
+    return unless decided?
+
+    self.decided_at ||= Time.current
   end
 
   # アイテム登録時はクールダウン期間の選択が必要
