@@ -61,12 +61,12 @@ class Item < ApplicationRecord
   def next_action_message
     case status
     when "thinking"
-      if cooldown_not_selected?
-        "クールダウンタイマーを設定して、次のステップに進みましょう"
+      if cooldown_skipped?
+        "クールダウンタイマーの設定か、購入判断に進むことができます"
       elsif cooldown_active?
         "クールダウンが終わるまで、ひと休みしましょう"
       elsif ready_for_decision?
-        "ジャーナリングと購入判断に進むことができます"
+        "購入判断に進むことができます"
       end
     end
   end
@@ -74,23 +74,14 @@ class Item < ApplicationRecord
   # クールダウンタイマーの時間選択
   def cooldown_options_for_select
     self.class.cooldown_durations.keys.map do |key|
-      [ I18n.t("activerecord.enums.item.cooldown_duration.#{key}"), key ]
-    end
-  end
-
-  # 設定したクールダウン期間・完了までの残り時間を表示
-  def cooldown_status_text
-    if cooldown_active?
-      "#{cooldown_duration_text}のクールダウン中 (#{remaining_time_text})"
-    elsif cooldown_skipped?
-      "クールダウンは設定されていません"
-    elsif cooldown_finished?
-      "#{cooldown_duration_text}のクールダウンが終わりました"
+      [ I18n.t("activerecord.enums.item.cooldown_duration.#{key}.label"),
+        key,
+        I18n.t("activerecord.enums.item.cooldown_duration.#{key}.description") ]
     end
   end
 
   def cooldown_duration_text
-    I18n.t("activerecord.enums.item.cooldown_duration.#{cooldown_duration}") if cooldown_duration.present?
+    I18n.t("activerecord.enums.item.cooldown_duration.#{cooldown_duration}.label") if cooldown_duration.present?
   end
 
   def remaining_time_text

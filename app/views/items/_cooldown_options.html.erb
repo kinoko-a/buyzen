@@ -1,11 +1,11 @@
 <div class="mb-12">
   <div class="mb-3">
     <p class="text-sm font-medium">クールダウンタイマー</p>
-    <p class="text-xs mt-1">※登録後に通知方法を設定できます</p>
+    <p class="text-xs mt-1">少し時間を置いてみますか？（1商品につき1回、タイマーをセットすることができます）</p>
   </div>
 
   <!-- 画面遷移図のような見た目に変更。スキップ選択後の再設定時は、選択肢にスキップを表示しない。 -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mx-3">
+  <div class="grid grid-cols-1 gap-4 mx-3">
     <% options =
       if @item.cooldown_skipped?
         @item.cooldown_options_for_select
@@ -13,7 +13,9 @@
         @item.cooldown_options_for_select + [["今回は設定しない", "skip"]]
       end %>
 
-    <% options.each do |label, value| %>
+    <% options.each do |label, value, description| %>
+      <% is_hours_24 = (value == "hours_24") %>
+      <% is_skip = (value == "skip") %>
       <label class="cursor-pointer group">
         <%= radio_button_tag "cooldown_choice", value,
           (params[:cooldown_choice] == value),
@@ -23,7 +25,7 @@
                     hover:bg-gray-100 transition
                     peer-checked:border-accent peer-checked:ring-2 peer-checked:ring-accent">
 
-          <div class="flex items-center gap-2">
+          <div class="flex items-center gap-4">
             <!-- 未選択 -->
             <ion-icon name="radio-button-off-outline"
                       class="text-xl group-has-[input:checked]:hidden"></ion-icon>
@@ -31,7 +33,18 @@
             <ion-icon name="radio-button-on-outline"
                       class="text-xl hidden group-has-[input:checked]:inline text-accent"></ion-icon>
 
-            <span class="text-sm"><%= label %></span>
+            <div class="flex flex-col">
+              <div class="flex items-center gap-1">
+                <div class="text-sm <%= is_skip ? "font-normal pt-1" : "font-medium" %>">
+                  <%= label %>
+                </div>
+                <% if is_hours_24 %>
+                  <p class="text-xs font-bold text-primary">迷ったらこちらをおすすめ</p>
+                <% end %>
+              </div>
+
+              <span class="text-xs mt-1"><%= description %></span>
+            </div>
           </div>
         </div>
       </label>

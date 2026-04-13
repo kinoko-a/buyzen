@@ -33,9 +33,17 @@
       </div>
 
       <!-- クールダウンタイマー設定内容・残り時間 -->
-      <div class="flex gap-1">
+      <div class="flex gap-0.5">
         <ion-icon name="hourglass-outline" class="text-base translate-y-[5px]"></ion-icon>
-        <p><%= @item.cooldown_status_text %></p>
+        <% if @item.cooldown_active? %>
+          <p>
+            <%= @item.remaining_time_text %>でクールダウンが完了します
+          </p>
+        <% elsif @item.cooldown_skipped? %>
+          <p>クールダウンタイマーをスキップしました</p>
+        <% elsif @item.cooldown_finished? %>
+          <p class="ml-0.5"><%= @item.cooldown_duration_text %>のクールダウンが完了しました</p>
+        <% end %>
       </div>
     </div>
 
