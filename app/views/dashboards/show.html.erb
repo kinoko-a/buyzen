@@ -13,21 +13,27 @@
     <div class="card-base">
       <div class="card-body">
         <h2 class="card-title text-sm">検討中</h2>
-        <p class="text-2xl font-bold">5</p>
+        <p class="text-2xl font-bold">
+          <%= @thinking_count %>
+        </p>
       </div>
     </div>
 
     <div class="card-base">
       <div class="card-body">
         <h2 class="card-title text-sm">買う</h2>
-        <p class="text-2xl font-bold">2</p>
+        <p class="text-2xl font-bold">
+          <%= @decided_buy_count %>
+        </p>
       </div>
     </div>
 
     <div class="card-base">
       <div class="card-body">
         <h2 class="card-title text-sm">買わない</h2>
-        <p class="text-2xl font-bold">3</p>
+        <p class="text-2xl font-bold">
+          <%= @decided_skip_count %>
+        </p>
       </div>
     </div>
 
