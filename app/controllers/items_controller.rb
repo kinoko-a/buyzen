@@ -100,15 +100,15 @@ class ItemsController < ApplicationController
 
     # 下書き保存
     when "draft"
-      save_or_update_draft
+      save_draft
       redirect_to item_path(@item), success: t("flash.items.decide.success.draft")
 
     # 購入判断完了
     when "complete"
       status_params = params.dig(:item, :status)
 
+      # バリデーションエラー(購入判断完了時は「買う・買わない」の選択が必要)
       if status_params.blank?
-        # バリデーションエラー(購入判断完了時は「買う・買わない」の選択が必要)
         @item.errors.add(:status, t("flash.items.decide.validation.status_required"))
 
         @item.assign_attributes(item_params)
@@ -120,22 +120,26 @@ class ItemsController < ApplicationController
 
         flash.now[:alert] = t("flash.items.decide.failure")
         render :purchase_decision, status: :unprocessable_entity
-      else
-        # バリデーションOK(購入判断「買う・買わない」を選択済み)
-        if @item.update(status: status_params) # 登録成功
-          finalize_journal
-          finalize_answers
-          redirect_to dashboards_path, success: t("flash.items.decide.success.complete")
-        else # 登録失敗
-          @item.assign_attributes(item_params)
-          @answers_map = build_answers_from_params
-          build_journal_from_params
 
-          flash.now[:alert] = t("flash.items.decide.failure")
-          render :purchase_decision, status: :unprocessable_entity
+      # バリデーションOK(購入判断「買う・買わない」を選択済み)
+      else
+        # 登録成功
+        ActiveRecord::Base.transaction do
+          finalize_decision(status_params)
         end
+
+        redirect_to dashboards_path, success: t("flash.items.decide.success.complete")
       end
     end
+
+  # 登録失敗
+  rescue ActiveRecord::RecordInvalid
+    @item.assign_attributes(item_params)
+    @answers_map = build_answers_from_params
+    build_journal_from_params
+
+    flash.now[:alert] = t("flash.items.decide.failure")
+    render :purchase_decision, status: :unprocessable_entity
   end
 
   private
@@ -145,56 +149,65 @@ class ItemsController < ApplicationController
     redirect_to items_path, alert: "まだ次のステップに進めません" unless @item.ready_for_decision?
   end
 
+  # 判断完了（購入判断完了ボタンをクリック後、バリデーションOK）
+  def finalize_decision(status)
+    @item.update!(status: status)
+    save_item_fields
+    save_answers(is_draft: false)
+    save_journal(is_draft: false)
+  end
+
   # 下書き保存
-  def save_or_update_draft
-    save_item_draft_fields
-    save_answers_draft
-    save_journal_draft
+  def save_draft
+    save_item_fields
+    save_answers(is_draft: true)
+    save_journal(is_draft: true)
   end
 
-  def save_item_draft_fields
-    draft_attributes = {}
-    draft_attributes[:desire_level] = params.dig(:item, :desire_level) if params.dig(:item, :desire_level).present?
-    draft_attributes[:current_mood] = params.dig(:item, :current_mood) if params.dig(:item, :current_mood).present?
-
-    return if draft_attributes.empty?
-
-    @item.update!(draft_attributes)
+  # 欲しい度・今の気分を保存
+  def save_item_fields
+    @item.update!(
+      desire_level: params.dig(:item, :desire_level),
+      current_mood: params.dig(:item, :current_mood)
+    )
   end
 
-  def save_answers_draft
+  # 質問回答を保存
+  def save_answers(is_draft:)
     return if answers_params.blank?
 
     answers_params.each do |_, answer_param|
       next if answer_param[:choice].blank?
 
-      question_id = answer_param["question_id"]
-      answer = @item.answers.find_or_initialize_by(question_id: question_id)
+      answer = @item.answers.find_or_initialize_by(
+        question_id: answer_param["question_id"]
+      )
 
-      answer.choice = answer_param[:choice]
-      answer.is_draft = true
-      answer.save!
-    end
-  end
-
-  def save_journal_draft
-    return if journal_content.blank?
-
-    draft_journal = @item.latest_draft_journal
-
-    if draft_journal.present?
-      # 下書きがある場合は更新
-      draft_journal.update!(content: journal_content)
-    else
-      # 下書きが無い場合は新規作成
-      @item.journals.create!(
-        content: journal_content,
-        is_draft: true
+      answer.update!(
+        choice: answer_param[:choice],
+        is_draft: is_draft
       )
     end
   end
 
-  # 購入判断完了ボタンをクリック後、失敗(バリデーションエラーまたは登録失敗)
+  # ジャーナリングを保存
+  def save_journal(is_draft:)
+    return if journal_content.blank?
+
+    if is_draft # 下書き
+      journal = @item.journals.find_or_initialize_by(is_draft: true)
+      journal.update!(content: journal_content)
+
+    else # 確定
+      journal = @item.journals.find_or_initialize_by(is_draft: true)
+      journal.update!(
+        content: journal_content,
+        is_draft: false
+      )
+    end
+  end
+
+  # 購入判断完了ボタンをクリック後、失敗した場合(バリデーションエラーまたは登録失敗)
   def build_answers_from_params
     return {} if answers_params.blank?
 
@@ -218,34 +231,6 @@ class ItemsController < ApplicationController
     @journal = Journal.new(
       content: journal_content
     )
-  end
-
-  # 購入判断完了ボタンをクリック後、バリデーションOK
-  def finalize_answers
-    @item.answers.update_all(is_draft: false)
-  end
-
-  def finalize_journal
-    return if journal_content.blank?
-
-    draft_journal = @item.latest_draft_journal
-
-    if draft_journal.present?
-      # 下書きがある場合は更新
-      draft_journal.update!(
-        content: journal_content,
-        is_draft: false
-      )
-      # 古い下書きを削除
-      @item.journals.where(is_draft: true).where.not(id: draft_journal.id).destroy_all
-    else
-
-      # 下書きが無い場合は新規作成
-      draft_journal = @item.journals.create!(
-        content: journal_content,
-        is_draft: false
-      )
-    end
   end
 
   # 購入判断済みの場合はリダイレクト

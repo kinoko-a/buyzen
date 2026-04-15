@@ -77,7 +77,7 @@ class Item < ApplicationRecord
   end
 
   def latest_draft_journal
-    journals.where(is_draft: true).order(created_at: :desc).first
+    journals.find_by(is_draft: true)
   end
 
   private
