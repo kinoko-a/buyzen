@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_05_144531) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_15_120021) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -49,7 +49,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_05_144531) do
     t.boolean "is_draft", default: true, null: false
     t.bigint "item_id", null: false
     t.datetime "updated_at", null: false
-    t.index ["item_id"], name: "index_journals_on_item_id"
+    t.index ["item_id"], name: "index_journals_unique_draft_per_item", unique: true, where: "(is_draft = true)"
   end
 
   create_table "questions", force: :cascade do |t|
