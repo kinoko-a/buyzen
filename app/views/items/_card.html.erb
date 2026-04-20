@@ -1,14 +1,14 @@
-<div class="card bg-base-100 shadow">
+<div class="card bg-white shadow">
   <div class="card-body">
 
     <div class="flex justify-between items-stretch">
 
       <!-- 左列 -->
-      <div class="flex flex-1 min-w-0 flex-col">
+      <div class="flex flex-1 min-w-0 flex-col justify-center">
 
         <!-- アイテム名 -->
-        <h2 class="card-title truncate">
-          <%= item.name %>
+        <h2 class="card-title">
+          <%= link_to item.name, item_path(item), class: "hover:underline font-semibold block truncate" %>
         </h2>
 
         <div class="flex text-sm mt-1 gap-4">
@@ -30,7 +30,7 @@
         <!-- ステータスバッジ + 次にできることを案内 -->
         <div class="mt-3 flex flex-col gap-1 sm:flex-row sm:items-center">
           <%= render 'items/status_badge', item: item %>
-          <p class="text-xs"><%= item.next_action_message %></p>
+          <p class="text-xs ml-1"><%= item.next_action_message %></p>
         </div>
       </div>
 
@@ -38,8 +38,8 @@
       <div class="flex flex-col items-end h-full mt-1 gap-5">
 
         <!-- 次できるアクションに遷移するボタン -->
-        <div class="btn-sm">
-          <% if item.next_action.nil? %>
+        <div class="btn-sm mt-auto">
+          <% if item.decided? || item.cooldown_active? %>
             <button class="invisible btn"></button>
           <% else %>
             <%= render 'items/next_action_button', item: item %>

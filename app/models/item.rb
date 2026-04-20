@@ -21,10 +21,6 @@ class Item < ApplicationRecord
   }
 
   # アイテムのステータスを確認
-  def cooldown_not_selected?
-    cooldown_duration.nil? && cooldown_until.nil?
-  end
-
   def cooldown_skipped?
     cooldown_duration.nil? && cooldown_until.present?
     # クールダウンをスキップ時は、cooldown_untilに現在時刻を入れる
@@ -42,29 +38,23 @@ class Item < ApplicationRecord
     cooldown_skipped? || cooldown_finished?
   end
 
-  def decided?
-    decided_buy? || decided_skip?
+  def drafted?
+    journals.exists?(is_draft: true) || answers.exists?(is_draft: true)
   end
 
-  # ステータスごとに、次のステップを表示
-  def next_action
-    case status
-    when "thinking"
-      if cooldown_not_selected?
-        { label: "クールダウン設定", type: :cooldown }
-      elsif ready_for_decision?
-        { label: "判断する", type: :decision }
-      end
-    end
+  def decided?
+    decided_buy? || decided_skip?
   end
 
   def next_action_message
     case status
     when "thinking"
       if cooldown_skipped?
-        "クールダウンタイマーの設定か、購入判断に進むことができます"
+        "クールダウンタイマーのセットか、購入判断に進むことができます"
       elsif cooldown_active?
         "クールダウンが終わるまで、ひと休みしましょう"
+      elsif drafted?
+        "購入判断を再開できます"
       elsif ready_for_decision?
         "購入判断に進むことができます"
       end
@@ -106,7 +96,7 @@ class Item < ApplicationRecord
     end
   end
 
-  # クールダウンタイマーの設定
+  # クールダウンタイマーのセット
   # 現在時刻から指定した期間までの時間を取得
   def set_cooldown_until
     return if cooldown_duration.blank?
@@ -122,7 +112,7 @@ class Item < ApplicationRecord
       end
   end
 
-  # クールダウンタイマーをスキップ(今回は設定しない)
+  # クールダウンタイマーをスキップ(今回はセットしない)
   def skip_cooldown!
     self.cooldown_until = Time.current
     self.cooldown_duration = nil

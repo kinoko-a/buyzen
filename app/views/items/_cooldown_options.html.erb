@@ -10,7 +10,7 @@
       if @item.cooldown_skipped?
         @item.cooldown_options_for_select
       else
-        @item.cooldown_options_for_select + [["今回は設定しない", "skip"]]
+        @item.cooldown_options_for_select + [["今回はセットしない", "skip"]]
       end %>
 
     <% options.each do |label, value, description| %>

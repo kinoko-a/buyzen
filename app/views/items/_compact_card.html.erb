@@ -1,0 +1,31 @@
+<div class="card bg-white shadow">
+  <div class="card-body">
+
+    <div class="flex justify-between items-center">
+
+      <!-- 左列 -->
+      <div class="flex-1 min-w-0">
+
+        <!-- アイテム名 -->
+        <h2 class="card-title">
+          <%= link_to item.name, item_path(item), class: "hover:underline block truncate" %>
+        </h2>
+      </div>
+
+      <!-- 右列 -->
+      <div class="flex-shrink-0 ml-3">
+
+        <!-- 次できるアクションに遷移するボタン -->
+        <% if item.cooldown_active? %>
+          <span class="badge badge-soft badge-info badge-outline text-sm rounded-full font-normal">
+            <%= item.remaining_time_text %>
+          </span>
+        <% else %>
+          <div class="btn-sm">
+            <%= render 'items/next_action_button', item: item %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
