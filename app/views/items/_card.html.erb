@@ -1,38 +1,48 @@
-<div class="card bg-base-100 shadow">
+<div class="card bg-white shadow">
   <div class="card-body">
 
     <div class="flex justify-between items-stretch">
 
       <!-- 左列 -->
-      <div class="flex flex-1 min-w-0 flex-col">
+      <div class="flex flex-1 min-w-0 flex-col justify-center">
 
         <!-- アイテム名 -->
-        <h2 class="card-title truncate">
-          <%= item.name %>
+        <h2 class="card-title">
+          <%= link_to item.name, item_path(item), class: "hover:underline font-semibold block truncate" %>
         </h2>
 
-        <!-- アイテム登録日 -->
-        <div class="text-sm mt-1">
-          <ion-icon name="calendar-outline" class="text-base translate-y-[2px]"></ion-icon>
-          <span><%= item.created_at.strftime("%Y/%-m/%-d") %>に登録</span>
+        <div class="flex text-sm mt-1 gap-4">
+          <!-- アイテム登録日 -->
+          <div class="flex gap-1">
+            <ion-icon name="calendar-outline" class="text-base translate-y-[2px]"></ion-icon>
+            <span><%= item.created_at.strftime("%Y/%-m/%-d") %>に登録</span>
+          </div>
+
+          <!-- クールダウンタイマー残り時間 -->
+          <div class="flex">
+            <% if item.cooldown_active? %>
+              <ion-icon name="hourglass-outline" class="text-base translate-y-[2px]"></ion-icon>
+              <p><%= item.remaining_time_text %></p>
+            <% end %>
+          </div>
         </div>
 
         <!-- ステータスバッジ + 次にできることを案内 -->
         <div class="mt-3 flex flex-col gap-1 sm:flex-row sm:items-center">
           <%= render 'items/status_badge', item: item %>
-          <p class="text-xs"><%= item.next_action_message %></p>
+          <p class="text-xs ml-1"><%= item.next_action_message %></p>
         </div>
       </div>
 
       <!-- 右列 -->
-      <div class="flex flex-col items-end h-full mt-1 gap-5">
+      <div class="flex flex-col items-end h-full mt-1 ml-1 gap-5">
 
         <!-- 次できるアクションに遷移するボタン -->
-        <div class="btn-sm">
-          <% if item.next_action.nil? %>
+        <div class="btn-sm mt-auto">
+          <% if item.decided? || item.cooldown_active? %>
             <button class="invisible btn"></button>
           <% else %>
-            <%= render 'items/next_action_button', item: item %>
+            <%= render 'items/next_action_button', item: item, button_class: "btn-base min-w-[100px]" %>
           <% end %>
         </div>
 

@@ -1,77 +1,102 @@
 <div class="container-main space-y-8">
 
-  <!-- ヘッダー -->
   <div class="flex items-center justify-between">
-    <h1 class="text-2xl md:text-3xl font-bold">ダッシュボード</h1>
+    <h1 class="text-2xl md:text-3xl font-bold opacity-90">H O M E</h1>
 
-    <%= link_to '＋ 登録', new_item_path, class: "btn-base btn-xl text-lg" %>
+    <div class="flex gap-6">
+      <%= link_to 'リスト', items_path, class: "btn btn-outline btn-xl text-lg" %>
+      <%= link_to '＋ 登録', new_item_path, class: "btn-base btn-xl text-lg" %>
+    </div>
   </div>
 
-  <!-- サマリーカード -->
+  <!-- 登録済みアイテムをカウント -->
   <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
 
     <div class="card-base">
       <div class="card-body">
         <h2 class="card-title text-sm">検討中</h2>
-        <p class="text-2xl font-bold">5</p>
+        <p class="text-2xl font-bold">
+          <%= @thinking_count %>
+        </p>
       </div>
     </div>
 
     <div class="card-base">
       <div class="card-body">
         <h2 class="card-title text-sm">買う</h2>
-        <p class="text-2xl font-bold">2</p>
+        <p class="text-2xl font-bold">
+          <%= @decided_buy_count %>
+        </p>
       </div>
     </div>
 
     <div class="card-base">
       <div class="card-body">
         <h2 class="card-title text-sm">買わない</h2>
-        <p class="text-2xl font-bold">3</p>
+        <p class="text-2xl font-bold">
+          <%= @decided_skip_count %>
+        </p>
       </div>
     </div>
 
   </div>
 
-  <!-- メインリスト -->
-  <div class="card bg-base-200 shadow-sm">
-    <div class="card-body">
+  <!-- 今できることの提案 -->
 
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="card-title">最近気になったもの</h2>
-        <%= link_to "すべて見る", items_path, class: "btn btn-outline" %>
-      </div>
-
-      <ul class="space-y-4">
-
-        <li class="flex items-center justify-between p-3 rounded-lg bg-base-100">
-          <div>
-            <p class="font-medium">アイテム1</p>
-            <p class="text-sm opacity-70">クールダウン完了</p>
-          </div>
-          <button class="btn btn-sm btn-ghost">詳細</button>
-        </li>
-
-        <li class="flex items-center justify-between p-3 rounded-lg bg-base-100">
-          <div>
-            <p class="font-medium">アイテム2</p>
-            <p class="text-sm opacity-70">下書き中</p>
-          </div>
-          <button class="btn btn-sm btn-ghost">詳細</button>
-        </li>
-
-        <li class="flex items-center justify-between p-3 rounded-lg bg-base-100">
-          <div>
-            <p class="font-medium">アイテム3</p>
-            <p class="text-sm opacity-70">クールダウン中</p>
-          </div>
-          <button class="btn btn-sm btn-ghost">詳細</button>
-        </li>
-
-      </ul>
-
+  <!-- 下書き中のアイテム -->
+  <% if @draft_items.present? %>
+    <div class="flex flex-col rounded-sm p-6 bg-base-200 space-y-5">
+      <h3 class="text-sm">回答途中のアイテムがあります。購入判断を再開しましょう。</h3>
+      <% @draft_items.each do |item| %>
+        <%= render 'items/compact_card', item: item %>
+      <% end %>
+      <% if @draft_items_more %>
+        <div class="flex justify-center">
+          <%= link_to "すべて見る", items_path(status: "thinking"), class: "text-sm font-medium flex items-center gap-1" %>
+        </div>
+      <% end %>
     </div>
-  </div>
+  <% end %>
+
+  <!-- クールダウンが完了したアイテム -->
+  <% if @ready_items.present? %>
+    <div class="flex flex-col rounded-sm p-6 bg-base-200 space-y-5">
+      <h3 class="text-sm">クールダウンが完了しました。買うかどうか、考えてみますか？</h3>
+      <% @ready_items.each do |item| %>
+        <%= render 'items/compact_card', item: item %>
+      <% end %>
+      <% if @ready_items_more %>
+        <div class="flex justify-center">
+          <%= link_to "すべて見る", items_path(status: "thinking"), class: "text-sm font-medium flex items-center gap-1" %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <!-- クールダウン中のアイテム -->
+  <% if @cooldown_items.present? %>
+    <div class="flex flex-col rounded-sm p-6 bg-info/30 space-y-5">
+      <h3 class="text-sm">クールダウンが終わるまで、ひと休みしましょう。</h3>
+      <% @cooldown_items.each do |item| %>
+        <%= render 'items/compact_card', item: item %>
+      <% end %>
+      <% if @cooldown_items_more %>
+        <div class="flex justify-center">
+          <%= link_to "すべて見る", items_path(status: "thinking"), class: "text-sm font-medium flex items-center gap-1" %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <!-- 待機中のアイテムが無い -->
+  <% if @draft_items.empty? && @ready_items.empty? && @cooldown_items.empty? %>
+    <div class="card-base">
+      <div class="card-body text-center py-6 bg-base-200 text-sm leading-relaxed">
+        <h3>商品を登録すると、こちらに表示されます。</h3>
+        <p>新しく登録してみましょう。</p>
+      </div>
+    </div>
+  <% end %>
 
   <!-- アクション -->
   <div class="card-base">

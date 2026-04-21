@@ -1,14 +1,10 @@
-<% if item.next_action.present? %>
-  <% action = item.next_action %>
+<% if item.thinking? %>
 
-  <% path =
-    case action[:type]
-    when :cooldown
-      "#"
-    when :decision
-      purchase_decision_item_path(item)
-    end
-  %>
+  <% if item.drafted? %>
+    <%= link_to "続きから入力", purchase_decision_item_path(item), class: button_class %>
 
-  <%= link_to action[:label], path, class: "btn-base" %>
+  <% elsif item.ready_for_decision? %>
+    <%= link_to "判断する", purchase_decision_item_path(item), class: button_class %>
+  <% end %>
+
 <% end %>

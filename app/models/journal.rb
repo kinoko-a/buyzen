@@ -1,4 +1,5 @@
 class Journal < ApplicationRecord
+  validates :content, length: { maximum: 65_535 }
   validates :is_draft, inclusion: { in: [ true, false ] }
   validate :only_one_draft_per_item
 

@@ -86,7 +86,7 @@ RSpec.describe "Items", type: :request do
         }
 
         expect(other_item.reload.name).not_to eq "不正更新"
-        expect(response).to have_http_status(:not_found)
+        expect(response).to redirect_to(items_path)
       end
     end
 

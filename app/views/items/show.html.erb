@@ -1,8 +1,8 @@
 <div class="max-w-3xl mx-auto my-8 px-4">
   <div class="bg-white rounded-xl shadow px-6 py-10 space-y-6">
 
-    <div class="flex flex-row items-start justify-between gap-3">
-      <div class="flex flex-col gap-2">
+    <div class="flex flex-row items-start justify-between m-1 gap-5">
+      <div class="flex flex-col gap-3">
         <!-- アイテム名 -->
         <h1 class="text-2xl sm:text-3xl font-bold leading-tight">
           <%= @item.name %>
@@ -12,29 +12,42 @@
         <div>
           <%= render 'items/status_badge', item: @item %>
         </div>
+
+        <!-- 日時情報 -->
+        <div class="flex flex-col my-3 text-md leading-relaxed">
+          <!-- アイテム登録日時 -->
+          <div class="flex gap-1">
+            <ion-icon name="calendar-outline" class="text-base translate-y-[4px]"></ion-icon>
+            <span>
+              <%= @item.created_at.strftime("%Y/%-m/%-d") %>
+              <span class="mx-0.5"></span>
+              <%= @item.created_at.strftime("%-H:%M") %>に登録
+            </span>
+          </div>
+
+          <!-- クールダウンタイマー設定内容・残り時間 -->
+          <div class="flex gap-0.5">
+            <ion-icon name="hourglass-outline" class="text-base translate-y-[5px]"></ion-icon>
+            <% if @item.cooldown_active? %>
+              <p>
+                <%= @item.remaining_time_text %>でクールダウンが完了します
+              </p>
+            <% elsif @item.cooldown_skipped? %>
+              <p>クールダウンタイマーをスキップしました</p>
+            <% elsif @item.cooldown_finished? %>
+              <p class="ml-0.5"><%= @item.cooldown_duration_text %>のクールダウンが完了しました</p>
+            <% end %>
+          </div>
+        </div>
       </div>
 
       <!-- 次できるアクションに遷移するボタン -->
-      <div class="self-start sm:self-auto">
-        <%= render 'items/next_action_button', item: @item %>
-      </div>
-    </div>
+      <div class="flex flex-col gap-4">
+        <% if @item.thinking? && @item.cooldown_skipped? %>
+          <%= link_to "クールダウン", cooldown_item_path(@item), class: "btn btn-info opacity-70 text-white min-w-[120px]" %>
+        <% end %>
 
-    <!-- 日時情報 -->
-    <div class="text-md">
-      <div class="flex gap-1">
-        <ion-icon name="calendar-outline" class="text-base translate-y-[4px]"></ion-icon>
-        <span>
-          <%= @item.created_at.strftime("%Y/%-m/%-d") %>
-          <span class="mx-0.5"></span>
-          <%= @item.created_at.strftime("%-H:%M") %>に登録
-        </span>
-      </div>
-
-      <!-- クールダウンタイマー設定内容を追加 -->
-      <div class="flex gap-1">
-        <ion-icon name="hourglass-outline" class="text-base translate-y-[4px]"></ion-icon>
-        <p>24時間のクールダウン中(あと3時間)</p>
+        <%= render 'items/next_action_button', item: @item, button_class: "btn-base min-w-[120px]" %>
       </div>
     </div>
 
