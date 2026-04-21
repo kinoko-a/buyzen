@@ -1,19 +1,10 @@
-<div class="flex gap-2 flex-wrap justify-end gap-4">
-  <% if item.thinking? %>
+<% if item.thinking? %>
 
-    <!-- クールダウン設定へ -->
-    <!--
-    <% if item.cooldown_skipped? %>
-      <%= link_to "クールダウン", "#", class: "btn btn-outline min-w-[110px]" %>
-    <% end %>
-    -->
+  <% if item.drafted? %>
+    <%= link_to "続きから入力", purchase_decision_item_path(item), class: button_class %>
 
-    <!-- 購入判断画面へ -->
-    <% if item.drafted? %>
-      <%= link_to "続きから入力", purchase_decision_item_path(item), class: "btn-base min-w-[110px]" %>
-
-    <% elsif item.ready_for_decision? %>
-      <%= link_to "判断する", purchase_decision_item_path(item), class: "btn-base min-w-[110px]" %>
-    <% end %>
+  <% elsif item.ready_for_decision? %>
+    <%= link_to "判断する", purchase_decision_item_path(item), class: button_class %>
   <% end %>
-</div>
+
+<% end %>

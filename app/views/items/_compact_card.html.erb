@@ -21,9 +21,7 @@
             <%= item.remaining_time_text %>
           </span>
         <% else %>
-          <div class="btn-sm">
-            <%= render 'items/next_action_button', item: item %>
-          </div>
+          <%= render 'items/next_action_button', item: item, button_class: "btn-base min-w-[100px]" %>
         <% end %>
       </div>
     </div>

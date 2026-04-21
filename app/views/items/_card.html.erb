@@ -35,14 +35,14 @@
       </div>
 
       <!-- 右列 -->
-      <div class="flex flex-col items-end h-full mt-1 gap-5">
+      <div class="flex flex-col items-end h-full mt-1 ml-1 gap-5">
 
         <!-- 次できるアクションに遷移するボタン -->
         <div class="btn-sm mt-auto">
           <% if item.decided? || item.cooldown_active? %>
             <button class="invisible btn"></button>
           <% else %>
-            <%= render 'items/next_action_button', item: item %>
+            <%= render 'items/next_action_button', item: item, button_class: "btn-base min-w-[100px]" %>
           <% end %>
         </div>
 
