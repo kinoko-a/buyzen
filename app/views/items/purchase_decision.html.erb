@@ -1,15 +1,17 @@
 <div class="max-w-3xl mx-auto my-8 px-4">
   <div class="bg-white rounded-xl shadow px-8 py-10 space-y-11">
     <div class="mt-2 mb-9 text-center">
-      <h1 class="text-2xl font-bold ">購入を判断する</h1>
+      <h1 class="text-2xl font-bold">購入を判断する</h1>
       <p class="text-sm mt-4">
         もしよろしければ、質問を活用しながら<br>
         買うかどうかを考えてみてください。
       </p>
     </div>
 
+    <%= render "shared/error_messages", object: @item %>
+
     <!-- アイテム情報 -->
-    <div class="bg-base-200 rounded-lg opacity-90">
+    <div class="bg-base-200 rounded-sm opacity-90">
       <div class="p-1 ml-2">
         <p class="font-medium"><%= @item.name %></p>
 
@@ -25,8 +27,8 @@
     <%= form_with model: @item, url: submit_decision_item_path(@item), method: :patch, local: true do |f| %>
 
       <!-- 質問（任意回答） -->
-      <h2 class="font-medium mb-5">質問から、気になった理由・買う理由を探してみる（任意）</h2>
-      <div class="space-y-4 mb-15 max-w-xl mx-auto">
+      <h2 class="font-medium mt-11 mb-5 ml-1">質問から、気になった理由・買う理由を探してみる（任意）</h2>
+      <div class="space-y-4 max-w-xl mx-auto">
 
         <!-- 欲しい度 -->
         <div class="space-y-2 text-center mb-8">
@@ -97,7 +99,7 @@
       </div>
 
       <!-- ジャーナリング（任意回答） -->
-      <div class="space-y-2">
+      <div class="space-y-2 mx-1">
         <h2 class="block font-medium mt-10 mb-2">ジャーナリングで、購入判断のきっかけを引き出してみる（任意）</h2>
         <p class="text-xs mt-1 leading-relaxed">
           このアイテムを手にすることで、あなたの日常はどのように彩られますか？<br>
@@ -108,13 +110,14 @@
         <%= f.text_area "journal_content",
             value: @journal&.content,
             rows:  6,
-            class: "textarea textarea-bordered w-full focus:outline-none" %>
+            class: "textarea textarea-bordered w-full focus:outline-none mt-1" %>
       </div>
 
       <div class="border-t border-base-300 my-12"></div>
 
       <!-- 購入判断 -->
-      <div class="space-y-4">
+      <div id="status-section" class="space-y-4">
+
         <p class="text-sm text-center">気持ちは決まりましたか？</p>
 
         <div class="grid grid-cols-2 gap-6 max-w-xs mx-auto">
@@ -159,13 +162,25 @@
         </div>
 
         <!-- 選択必須のメッセージ -->
-        <% if @item.errors[:status].any? %>
+        <% if @item.errors[:base].any? %>
           <div class="mt-5 flex justify-center">
             <div class="bg-error/10 border border-error/30 text-error px-4 py-2 rounded-full text-sm font-medium">
-              <ion-icon name="alert-circle-outline" class="mr-1 text-lg translate-y-[3px]"></ion-icon>
-              <%= @item.errors[:status].first %>
+              <ion-icon name="alert-circle" class="mr-1 text-lg translate-y-[3px]"></ion-icon>
+              <%= @item.errors[:base].first %>
             </div>
           </div>
+
+          <script>
+            requestAnimationFrame(() => {
+              const el = document.getElementById("status-section");
+              if (el) {
+                el.scrollIntoView({
+                  behavior: "auto",
+                  block: "center"
+                });
+              }
+            });
+          </script>
         <% end %>
       </div>
 

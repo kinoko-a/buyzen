@@ -29,7 +29,9 @@ class ItemsController < ApplicationController
       @item.cooldown_duration = choice
     end
 
-    if @item.save
+    begin
+      @item.save!
+
       if choice == "skip"
         # クールダウンスキップ時は購入判断画面に遷移
         redirect_to purchase_decision_item_path(@item), flash: { success: t("flash.items.create.success") }
@@ -37,7 +39,12 @@ class ItemsController < ApplicationController
         # クールダウンタイマー使用時はアイテム詳細画面に遷移
         redirect_to item_path(@item), flash: { success: t("flash.items.create.success") }
       end
-    else
+
+    rescue ActiveRecord::RecordInvalid
+      render :new, status: :unprocessable_entity
+
+    rescue => e
+      Rails.logger.error(e)
       flash.now[:alert] = t("flash.items.create.failure")
       render :new, status: :unprocessable_entity
     end
@@ -46,9 +53,15 @@ class ItemsController < ApplicationController
   def edit; end
 
   def update
-    if @item.update(item_params)
+    begin
+      @item.update!(item_params)
       redirect_to item_path(@item), success: t("flash.items.update.success")
-    else
+
+    rescue ActiveRecord::RecordInvalid
+      render :edit, status: :unprocessable_entity
+
+    rescue => e
+      Rails.logger.error(e)
       flash.now[:alert] = t("flash.items.update.failure")
       render :edit, status: :unprocessable_entity
     end
@@ -123,7 +136,7 @@ class ItemsController < ApplicationController
 
       # バリデーションエラー(購入判断完了時は「買う・買わない」の選択が必要)
       if status_params.blank?
-        @item.errors.add(:status, t("flash.items.decide.validation.status_required"))
+        @item.errors.add(:base, t("flash.items.decide.validation.status_required"))
 
         @item.assign_attributes(item_params)
 
@@ -132,7 +145,6 @@ class ItemsController < ApplicationController
 
         build_journal_from_params
 
-        flash.now[:alert] = t("flash.items.decide.failure")
         render :purchase_decision, status: :unprocessable_entity
 
       # バリデーションOK(購入判断「買う・買わない」を選択済み)
