@@ -4,7 +4,7 @@ class Item < ApplicationRecord
   before_update :set_decided_at
   before_save :set_cooldown_until, if: :will_save_change_to_cooldown_duration?
 
-  validates :name, presence: true, length: { maximum: 255 }
+  validates :name, presence: true, length: { maximum: 70 }
   validates :note, length: { maximum: 65_535 }
   validate :cooldown_choice_valid
 
