@@ -13,6 +13,11 @@ ja:
         success: "削除しました"
         failure: "削除できませんでした"
       not_found: "アイテムが見つかりません"
+      cooldown:
+        success: "クールダウンタイマーをセットしました"
+        failure: "保存できませんでした"
+        validation:
+          already_used: "こちらの商品は、すでにクールダウンタイマーを使用しています"
       decide:
         success:
           complete: "購入判断を保存しました。おつかれさまでした！"

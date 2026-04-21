@@ -4,6 +4,9 @@ Rails.application.routes.draw do
   resource :dashboards, only: [ :show ]
   resources :items, only: %i[index show new create edit update destroy] do
     member do
+      get :cooldown
+      patch :set_cooldown
+
       get :purchase_decision
       patch :submit_decision
     end

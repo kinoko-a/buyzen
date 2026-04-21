@@ -1,6 +1,7 @@
 class ItemsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_item, only: [ :show, :edit, :update, :destroy, :purchase_decision, :submit_decision ]
+  before_action :set_item, except: [ :index, :new, :create ]
+  before_action :ensure_cooldown_not_set, only: [ :cooldown, :set_cooldown ]
   before_action :ensure_ready_for_decision, only: [ :purchase_decision, :submit_decision ]
   before_action :prevent_access_after_decision, only: [ :purchase_decision, :submit_decision ]
 
@@ -60,6 +61,30 @@ class ItemsController < ApplicationController
     redirect_to item_path(@item), alert: t("flash.items.destroy.failure")
   end
 
+  # クールダウンタイマー（スキップ時）
+  # 表示
+  def cooldown
+  end
+
+  # 登録
+  def set_cooldown
+    choice = params[:cooldown_choice]
+
+    unless choice.present?
+      @item.errors.add(:cooldown_duration, "を選択してください")
+      return render :cooldown, status: :unprocessable_entity
+    end
+
+    if Item.cooldown_durations.key?(choice)
+      @item.update!(cooldown_duration: choice)
+      redirect_to item_path(@item), success: t("flash.items.cooldown.success")
+    else
+      flash.now[:alert] = t("flash.items.cooldown.failure")
+      render :cooldown, status: :unprocessable_entity
+    end
+  end
+
+  # 購入判断
   # フォーム表示用
   def purchase_decision
     @journal = @item.latest_draft_journal || @item.journals.build
@@ -221,6 +246,13 @@ class ItemsController < ApplicationController
     @item = current_user.items.find(params[:id])
   rescue ActiveRecord::RecordNotFound
     redirect_to items_path, alert: t("flash.items.not_found")
+  end
+
+  # 既にクールダウンタイマーを使用している場合は遷移できない
+  def ensure_cooldown_not_set
+    return if @item.cooldown_duration.nil?
+
+    redirect_to item_path(@item), alert: t("flash.items.cooldown.validation.already_used")
   end
 
   # クールダウン完了前は、購入判断画面に遷移できない
