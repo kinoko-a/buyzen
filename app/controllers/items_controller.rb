@@ -3,7 +3,7 @@ class ItemsController < ApplicationController
   before_action :set_item, except: [ :index, :new, :create ]
   before_action :ensure_cooldown_not_set, only: [ :cooldown, :set_cooldown ]
   before_action :ensure_ready_for_decision, only: [ :purchase_decision, :submit_decision ]
-  before_action :prevent_access_after_decision, only: [ :purchase_decision, :submit_decision ]
+  before_action :prevent_access_after_decision, only: [ :cooldown, :set_cooldown, :purchase_decision, :submit_decision ]
 
   def index
     @items = current_user.items.order(created_at: :desc)
