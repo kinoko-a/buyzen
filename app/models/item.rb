@@ -8,12 +8,14 @@ class Item < ApplicationRecord
   validates :note, length: { maximum: 65_535 }
   validate :cooldown_choice_valid
 
-  enum :status, { thinking: 0, decided_buy: 1, decided_skip: 2 }
+  enum :status, { thinking: 0, drafting: 1, decided_buy: 2, decided_skip: 3 }
   enum :cooldown_duration, { minutes_30: 0, hours_24: 1, days_3: 2 }
 
   belongs_to :user
-  has_many :journals, dependent: :destroy
+  has_one :journal, dependent: :destroy
   has_many :answers, dependent: :destroy
+
+  scope :undecided, -> { where(status: [ :thinking, :drafting ]) }
 
   scope :cooldown_finished_unnotified, -> {
     where("cooldown_until <= ?", Time.current)
@@ -21,43 +23,42 @@ class Item < ApplicationRecord
   }
 
   # アイテムのステータスを確認
-  def cooldown_skipped?
-    cooldown_duration.nil? && cooldown_until.present?
-    # クールダウンをスキップ時は、cooldown_untilに現在時刻を入れる
-  end
-
-  def cooldown_active?
-    cooldown_until.present? && cooldown_until > Time.current
-  end
-
-  def cooldown_finished?
-    cooldown_until.present? && cooldown_until <= Time.current
+  def undecided?
+    thinking? || drafting?
   end
 
   def ready_for_decision?
+    return false if decided?
     cooldown_skipped? || cooldown_finished?
-  end
-
-  def drafted?
-    journals.exists?(is_draft: true) || answers.exists?(is_draft: true)
   end
 
   def decided?
     decided_buy? || decided_skip?
   end
 
+  def cooldown_skipped?
+    cooldown_duration.nil? && cooldown_until.present?
+    # クールダウンをスキップ時は、cooldown_untilに現在時刻を入れる
+  end
+
+  def cooldown_active?
+    cooldown_duration.present? && cooldown_until > Time.current
+  end
+
+  def cooldown_finished?
+    cooldown_until.present? && cooldown_until <= Time.current
+  end
+
   def next_action_message
-    case status
-    when "thinking"
-      if cooldown_skipped?
-        "クールダウンタイマーのセットか、購入判断に進むことができます"
-      elsif cooldown_active?
-        "クールダウンが終わるまで、ひと休みしましょう"
-      elsif drafted?
-        "購入判断を再開できます"
-      elsif ready_for_decision?
-        "購入判断に進むことができます"
-      end
+    return if self.decided?
+    if cooldown_skipped?
+      "クールダウンタイマーのセットか、購入判断に進むことができます"
+    elsif cooldown_active?
+      "クールダウンが終わるまで、ひと休みしましょう"
+    elsif drafting?
+      "購入判断を再開できます"
+    elsif ready_for_decision?
+      "購入判断に進むことができます"
     end
   end
 
@@ -123,16 +124,12 @@ class Item < ApplicationRecord
     update!(notified_at: Time.current)
   end
 
-  def latest_draft_journal
-    journals.find_by(is_draft: true)
-  end
-
   private
 
   # 初回の購入判断後にdecided_atカラムを更新
   def set_decided_at
     return unless will_save_change_to_status?
-    return unless status_was == "thinking"
+    return unless [ "thinking", "drafting" ].include?(status_was)
     return unless decided?
 
     self.decided_at ||= Time.current

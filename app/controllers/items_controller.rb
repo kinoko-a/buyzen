@@ -1,16 +1,13 @@
 class ItemsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_item, except: [ :index, :new, :create ]
+  before_action :prevent_access_after_decision, only: [ :cooldown, :set_cooldown, :purchase_decision, :submit_decision ]
   before_action :ensure_cooldown_not_set, only: [ :cooldown, :set_cooldown ]
   before_action :ensure_ready_for_decision, only: [ :purchase_decision, :submit_decision ]
-  before_action :prevent_access_after_decision, only: [ :cooldown, :set_cooldown, :purchase_decision, :submit_decision ]
 
   def index
     @items = current_user.items.order(created_at: :desc)
-
-    if params[:status].present?
-      @items = @items.where(status: params[:status])
-    end
+    @items = filter_items(@items)
   end
 
   def show; end
@@ -100,9 +97,9 @@ class ItemsController < ApplicationController
   # 購入判断
   # フォーム表示用
   def purchase_decision
-    @journal = @item.latest_draft_journal || @item.journals.build
     @questions = Question.where(user_id: nil).order(:position)
-    @answers_map = @item.answers.where(is_draft: true).index_by(&:question_id)
+    @answers_map = @item.answers.index_by(&:question_id)
+    @journal = @item.journal || @item.build_journal
 
     # フォーム送信後(paramsがある場合)は params 優先で上書き
     if answers_params.present?
@@ -127,7 +124,7 @@ class ItemsController < ApplicationController
 
     # 下書き保存
     when "draft"
-      save_draft
+      save_item(:drafting)
       redirect_to item_path(@item), success: t("flash.items.decide.success.draft")
 
     # 購入判断完了
@@ -150,10 +147,7 @@ class ItemsController < ApplicationController
       # バリデーションOK(購入判断「買う・買わない」を選択済み)
       else
         # 登録成功
-        ActiveRecord::Base.transaction do
-          finalize_decision(status_params)
-        end
-
+        save_item(status_params)
         redirect_to dashboards_path, success: t("flash.items.decide.success.complete")
       end
     end
@@ -170,31 +164,31 @@ class ItemsController < ApplicationController
 
   private
 
-  # 判断完了（購入判断完了ボタンをクリック後、バリデーションOK）
-  def finalize_decision(status)
-    @item.update!(status: status)
-    save_item_fields
-    save_answers(is_draft: false)
-    save_journal(is_draft: false)
+  def filter_items(items)
+    return items unless params[:status].present?
+
+    case params[:status]
+    when "undecided"
+      items.undecided
+    else
+      items.where(status: params[:status])
+    end
   end
 
-  # 下書き保存
-  def save_draft
-    save_item_fields
-    save_answers(is_draft: true)
-    save_journal(is_draft: true)
+  def save_item(status)
+    ActiveRecord::Base.transaction do
+      @item.update!(
+        status: status,
+        desire_level: params.dig(:item, :desire_level),
+        current_mood: params.dig(:item, :current_mood)
+      )
+
+      save_answers
+      save_journal
+    end
   end
 
-  # 欲しい度・今の気分を保存
-  def save_item_fields
-    @item.update!(
-      desire_level: params.dig(:item, :desire_level),
-      current_mood: params.dig(:item, :current_mood)
-    )
-  end
-
-  # 質問回答を保存
-  def save_answers(is_draft:)
+  def save_answers
     return if answers_params.blank?
 
     answers_params.each do |_, answer_param|
@@ -204,28 +198,19 @@ class ItemsController < ApplicationController
         question_id: answer_param["question_id"]
       )
 
-      answer.update!(
-        choice: answer_param[:choice],
-        is_draft: is_draft
-      )
+      answer.update!(choice: answer_param[:choice])
     end
   end
 
-  # ジャーナリングを保存
-  def save_journal(is_draft:)
-    return if journal_content.blank?
+  def save_journal
+    journal = @item.journal || @item.build_journal
 
-    if is_draft # 下書き
-      journal = @item.journals.find_or_initialize_by(is_draft: true)
-      journal.update!(content: journal_content)
-
-    else # 確定
-      journal = @item.journals.find_or_initialize_by(is_draft: true)
-      journal.update!(
-        content: journal_content,
-        is_draft: false
-      )
+    if journal_content.blank?
+      journal.destroy! if journal.persisted?
+      return
     end
+
+    journal.update!(content: journal_content)
   end
 
   # 購入判断完了ボタンをクリック後、失敗した場合(バリデーションエラーまたは登録失敗)
@@ -267,14 +252,14 @@ class ItemsController < ApplicationController
     redirect_to item_path(@item), alert: t("flash.items.cooldown.validation.already_used")
   end
 
-  # クールダウン完了前は、購入判断画面に遷移できない
+  # クールダウン完了前は遷移できない
   def ensure_ready_for_decision
     return if @item.ready_for_decision?
 
     redirect_to item_path(@item), alert: t("flash.items.decide.access_denied.cooldown_active")
   end
 
-  # 購入判断完了後は、購入判断画面に遷移できない
+  # 購入判断完了後は遷移できない
   def prevent_access_after_decision
     return unless @item.decided?
 
