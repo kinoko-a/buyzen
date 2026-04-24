@@ -15,7 +15,7 @@ class Item < ApplicationRecord
   has_one :journal, dependent: :destroy
   has_many :answers, dependent: :destroy
 
-  scope :undecided, -> { where(status: [:thinking, :drafting]) }
+  scope :undecided, -> { where(status: [ :thinking, :drafting ]) }
 
   scope :cooldown_finished_unnotified, -> {
     where("cooldown_until <= ?", Time.current)
@@ -129,7 +129,7 @@ class Item < ApplicationRecord
   # 初回の購入判断後にdecided_atカラムを更新
   def set_decided_at
     return unless will_save_change_to_status?
-    return unless ["thinking", "drafting"].include?(status_was)
+    return unless [ "thinking", "drafting" ].include?(status_was)
     return unless decided?
 
     self.decided_at ||= Time.current
