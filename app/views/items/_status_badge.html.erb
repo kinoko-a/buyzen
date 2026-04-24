@@ -1,14 +1,15 @@
-<% case item.status %>
-<% when "thinking" %>
+<% if item.undecided? %>
   <% if item.cooldown_active? %>
     <span class="badge badge-soft badge-info badge-outline text-xs rounded-xs font-normal">クールダウン中</span>
-  <% elsif item.drafted? %>
+  <% elsif item.drafting? %>
     <span class="badge badge-soft badge-primary badge-outline text-xs rounded-full font-normal">購入判断を回答中</span>
   <% elsif item.cooldown_finished? %>
     <span class="badge badge-soft badge-primary badge-outline text-xs rounded-full font-normal">クールダウン完了</span>
   <% end %>
-<% when "decided_buy" %>
+
+<% elsif item.decided_buy? %>
   <span class="badge badge-soft badge-accent badge-outline text-xs rounded-full font-normal">買う</span>
-<% when "decided_skip" %>
+
+<% elsif item.decided_skip? %>
   <span class="badge badge-soft badge-info badge-outline text-xs rounded-full font-normal">買わない</span>
 <% end %>

@@ -16,7 +16,7 @@
       <div class="card-body">
         <h2 class="card-title text-sm">検討中</h2>
         <p class="text-2xl font-bold">
-          <%= @thinking_count %>
+          <%= @undecided_count %>
         </p>
       </div>
     </div>
@@ -52,7 +52,7 @@
       <% end %>
       <% if @draft_items_more %>
         <div class="flex justify-center">
-          <%= link_to "すべて見る", items_path(status: "thinking"), class: "text-sm font-medium flex items-center gap-1" %>
+          <%= link_to "すべて見る", items_path(status: "undecided"), class: "text-sm font-medium flex items-center gap-1" %>
         </div>
       <% end %>
     </div>
@@ -67,7 +67,7 @@
       <% end %>
       <% if @ready_items_more %>
         <div class="flex justify-center">
-          <%= link_to "すべて見る", items_path(status: "thinking"), class: "text-sm font-medium flex items-center gap-1" %>
+          <%= link_to "すべて見る", items_path(status: "undecided"), class: "text-sm font-medium flex items-center gap-1" %>
         </div>
       <% end %>
     </div>
@@ -82,7 +82,7 @@
       <% end %>
       <% if @cooldown_items_more %>
         <div class="flex justify-center">
-          <%= link_to "すべて見る", items_path(status: "thinking"), class: "text-sm font-medium flex items-center gap-1" %>
+          <%= link_to "すべて見る", items_path(status: "undecided"), class: "text-sm font-medium flex items-center gap-1" %>
         </div>
       <% end %>
     </div>
