@@ -6,8 +6,7 @@ class ItemsController < ApplicationController
   before_action :ensure_ready_for_decision, only: [ :purchase_decision, :submit_decision ]
 
   def index
-    @items = current_user.items.order(created_at: :desc)
-    @items = filter_items(@items)
+    @items = current_user.items.with_status(params[:status]).order(created_at: :desc).page(params[:page])
   end
 
   def show; end
@@ -163,17 +162,6 @@ class ItemsController < ApplicationController
   end
 
   private
-
-  def filter_items(items)
-    return items unless params[:status].present?
-
-    case params[:status]
-    when "undecided"
-      items.undecided
-    else
-      items.where(status: params[:status])
-    end
-  end
 
   def save_item(status)
     ActiveRecord::Base.transaction do
