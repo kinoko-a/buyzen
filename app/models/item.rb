@@ -17,6 +17,17 @@ class Item < ApplicationRecord
 
   scope :undecided, -> { where(status: [ :thinking, :drafting ]) }
 
+  scope :with_status, ->(status) {
+    return all if status.blank?
+
+    case status
+    when "undecided"
+      undecided
+    else
+      where(status: status)
+    end
+  }
+
   scope :cooldown_finished_unnotified, -> {
     where("cooldown_until <= ?", Time.current)
       .where(notified_at: nil)

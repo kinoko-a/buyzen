@@ -27,4 +27,9 @@
     </div>
   <% end %>
 
+  <!-- ページネーション -->
+  <div>
+    <%= paginate @items, params: { status: params[:status] } %>
+  </div>
+
 </div>
