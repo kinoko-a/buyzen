@@ -1,20 +1,32 @@
 <div class="max-w-3xl mx-auto my-8 px-4">
   <div class="bg-white rounded-xl shadow px-6 py-10 space-y-6">
 
-    <div class="flex flex-row items-start justify-between m-1 gap-5">
-      <div class="flex flex-col gap-3">
+    <div class="flex flex-col m-1 gap-3">
+      <div class="flex items-start gap-2 mr-2">
         <!-- アイテム名 -->
-        <h1 class="text-2xl sm:text-3xl font-bold leading-tight">
+        <h1 class="text-2xl sm:text-3xl font-bold leading-tight break-words">
           <%= @item.name %>
         </h1>
 
-        <!-- ステータスバッジ -->
-        <div>
-          <%= render 'items/status_badge', item: @item %>
-        </div>
+        <!-- 編集アイコン -->
+        <%= link_to edit_item_path(@item), class: "mt-1.5" do %>
+          <ion-icon name="pencil"
+            class="text-xl sm:text-2xl opacity-60 hover:text-primary transition">
+          </ion-icon>
+        <% end %>
+      </div>
+
+      <!-- ステータスバッジ -->
+      <%= render 'items/status_badge', item: @item %>
+    </div>
+
+    <div class="flex items-end justify-between mb-4 gap-7">
+
+      <!-- 左列 -->
+      <div class="flex flex-col m-1 gap-3">
 
         <!-- 日時情報 -->
-        <div class="flex flex-col my-3 text-md leading-relaxed">
+        <div class="flex flex-col mt-4 text-md leading-relaxed">
           <!-- アイテム登録日時 -->
           <div class="flex gap-1">
             <ion-icon name="calendar-outline" class="text-base translate-y-[4px]"></ion-icon>
@@ -33,7 +45,14 @@
                 <%= @item.remaining_time_text %>でクールダウンが完了します
               </p>
             <% elsif @item.cooldown_skipped? %>
-              <p>クールダウンタイマーをスキップしました</p>
+              <div class="flex items-center">
+                <p>クールダウンタイマーをスキップしました</p>
+                <% if @item.undecided? %>
+                  <ion-icon name="caret-forward-outline" class="text-lg"></ion-icon>
+                  <%= link_to "タイマーを使う", cooldown_item_path(@item),
+                    class: "text-sm text-info/80 font-bold hover:brightness-75 transition" %>
+                <% end %>
+              </div>
             <% elsif @item.cooldown_finished? %>
               <p class="ml-0.5"><%= @item.cooldown_duration_text %>のクールダウンが完了しました</p>
             <% end %>
@@ -41,14 +60,9 @@
         </div>
       </div>
 
-      <!-- 次できるアクションに遷移するボタン -->
-      <div class="flex flex-col gap-4">
-        <% if @item.cooldown_skipped? && @item.undecided? %>
-          <%= link_to "クールダウン", cooldown_item_path(@item), class: "btn btn-info opacity-70 text-white min-w-[120px]" %>
-        <% end %>
-
-        <%= render 'items/next_action_button', item: @item, button_class: "btn-base min-w-[120px]" %>
-      </div>
+      <!-- 右列： 次できるアクションに遷移するボタン -->
+      <%= render 'items/next_action_button', item: @item,
+        button_class: "btn-base ml-2 min-w-[100px] shrink-0 mb-2 mr-2" %>
     </div>
 
     <!-- メモ + 質問回答 + ジャーナリング内容 -->
@@ -65,19 +79,24 @@
       </div>
     </div>
 
-    <!-- 質問回答を追加 -->
-    <div class="bg-gray-50 rounded-lg p-4 space-y-2">
-      <p class="text-xs font-bold opacity-90">質問</p>
-      <div class="text-sm leading-relaxed">
+    <% if @item.decided? %>
 
-        <!-- 欲しい度・今の気分 -->
-        <div class="flex gap-2">
-          <% if @item.decided? %>
-            <div class="flex flex-col gap-2 font-medium">
+      <div class="divider divider-neutral/25 text-sm mt-10">
+        <%= @item.decided_at.strftime("%Y/%-m/%-d") if @item.decided_at.present? %>
+      </div>
+
+      <!-- 質問回答を追加 -->
+      <div class="bg-gray-50 rounded-lg p-4 space-y-2.5">
+        <p class="text-xs font-bold opacity-90">質問</p>
+        <div class="text-sm leading-relaxed">
+
+          <!-- 欲しい度・今の気分 -->
+          <div class="flex gap-2">
+            <div class="flex flex-col gap-2.5 font-medium">
               <p class="opacity-90">どのくらい欲しい？</p>
               <p class="opacity-90">気分は良い？</p>
             </div>
-            <div class="flex flex-col gap-2.5">
+            <div class="flex flex-col gap-3">
               <div class="rating rating-sm">
                 <% 1.upto(5) do |i| %>
                   <%= tag.input type: "radio",
@@ -96,18 +115,12 @@
                 <% end %>
               </div>
             </div>
-          <% else %>
-            <p class="text-sm text-gray-400 italic">
-              まだ登録されていません
-            </p>
-          <% end %>
-        </div>
+          </div>
 
-        <!-- 質問（8問） -->
-        <div>
-          <% if @item.decided? %>
+          <!-- 質問（8問） -->
+          <div>
             <% @item.answers.each do |answer| %>
-              <div class="mt-3 mb-3">
+              <div class="mt-3 mb-4">
                 <p class="text-sm font-medium opacity-90">
                   <%= answer.question.content %>
                 </p>
@@ -124,36 +137,37 @@
                 </div>
               </div>
             <% end %>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ジャーナリング -->
+      <div class="bg-gray-50 rounded-lg p-4 space-y-2">
+        <p class="text-xs font-bold opacity-90">ジャーナリング</p>
+        <div class="text-sm leading-relaxed">
+          <% if @item.journal&.content.present? %>
+            <%= simple_format(@item.journal.content) %>
+          <% else %>
+            <p class="text-sm text-gray-400 italic">
+              登録されていません
+            </p>
           <% end %>
         </div>
-
       </div>
-    </div>
 
-    <!-- ジャーナリング -->
-    <div class="bg-gray-50 rounded-lg p-4 space-y-2">
-      <p class="text-xs font-bold opacity-90">ジャーナリング</p>
-      <div class="text-sm leading-relaxed">
-        <% if @item.decided? && @item.journal&.content.present? %>
-          <%= simple_format(@item.journal.content) %>
-        <% else %>
-          <p class="text-sm text-gray-400 italic">
-            まだ登録されていません
-          </p>
-        <% end %>
-      </div>
-    </div>
+    <% end %>
 
-    <!-- アイテム編集・削除・一覧に遷移するボタン -->
-    <div class="flex flex-col items-center sm:flex-row sm:justify-center gap-4 sm:gap-6 pt-6 border-t">
-      <%= link_to "編集する", edit_item_path(@item), class: "btn-base w-fit px-4 min-w-[110px]" %>
+    <div class="border-t border-neutral/25 my-10"></div>
 
+    <!-- アイテム削除・一覧に遷移するボタン -->
+    <div class="flex flex-col items-center sm:flex-row sm:justify-center gap-4 sm:gap-6">
       <%= button_to "削除する", item_path(@item),
           method: :delete,
           data: { turbo_method: :delete, turbo_confirm: t("defaults.delete_confirm") },
-          class: "btn-base w-fit px-4 min-w-[110px]" %>
+          class: "btn-base w-fit min-w-[110px]" %>
 
-      <%= link_to "一覧に戻る", items_path, class: "btn btn-outline w-fit px-4 min-w-[110px]" %>
+      <%= link_to "一覧に戻る", items_path, class: "btn btn-outline w-fit min-w-[110px]" %>
     </div>
   </div>
 </div>

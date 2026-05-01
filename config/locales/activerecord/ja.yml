@@ -16,12 +16,17 @@ ja:
     enums:
       item:
         cooldown_duration:
-          minutes_30:
-            label: "30分"
-            description: "とりあえず欲しい気持ちを落ち着かせたい時に"
-          hours_24:
-            label: "24時間（1日）"
-            description: "一晩置いてから考えたい時に"
-          days_3:
-            label: "72時間（3日）"
-            description: "頭をリセットしてじっくり考えたい時に"
+          new:
+            minutes_30:
+              label: "30分"
+              description: "とりあえず欲しい気持ちを落ち着かせたい時に"
+            hours_24:
+              label: "24時間（1日）"
+              description: "一晩置いてから考えたい時に"
+            days_3:
+              label: "72時間（3日）"
+              description: "頭をリセットしてじっくり考えたい時に"
+          short:
+            minutes_30: "30分"
+            hours_24:   "24時間"
+            days_3:     "3日"
