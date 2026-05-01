@@ -1,0 +1,26 @@
+<div class="max-w-3xl mx-auto my-8 px-4">
+  <div class="bg-white rounded-xl shadow px-8 py-10 space-y-10">
+    <h1 class="text-xl font-bold mt-2 mb-10 text-center">ジャーナリングを編集する</h1>
+
+    <div class="flex flex-col items-start px-1 gap-1.5">
+      <p class="text-sm font-medium">商品名</p>
+      <p class="text-sm ml-0.5"><%= @item.name %></p>
+    </div>
+
+    <%= form_with model: [@item, @journal],
+                  url: item_journal_path(@item),
+                  method: :patch do |f| %>
+
+      <div class="mb-8">
+        <%= f.label :content, "ジャーナリング", class: "block text-sm font-medium mb-2" %>
+        <%= f.text_area :content, rows: 4, class: "textarea textarea-bordered w-full focus:outline-none" %>
+      </div>
+
+      <div class="flex flex-col items-center gap-6 mt-15 mb-3">
+        <%= f.submit "更新する", class: "btn-base sm:w-auto min-w-[140px]" %>
+        <%= link_to "キャンセル", item_path(@item), class: "btn btn-outline w-fit sm:w-auto min-w-[140px]" %>
+      </div>
+
+    <% end %>
+  </div>
+</div>
