@@ -8,8 +8,12 @@ class User < ApplicationRecord
   # password & password_confirmation: presence, length(6..128)
 
   validates :name, presence: true, length: { maximum: 30 }
-  validates :password, format: { with: /\A(?=.*[a-zA-Z])(?=.*\d).+\z/,
-                       message: "は英数字を混ぜて入力してください" }
+  validates :password,
+    format: {
+      with: /\A(?=.*[a-zA-Z])(?=.*\d).+\z/,
+      message: "は英数字を混ぜて入力してください"
+    },
+    allow_blank: true
 
   has_many :items, dependent: :destroy
   has_many :questions, dependent: :destroy
