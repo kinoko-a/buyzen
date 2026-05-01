@@ -9,15 +9,27 @@
   </div>
 
   <% if user_signed_in? %>
-    <!-- ログアウト -->
-    <div class="navbar-end gap-3">
-      <%= link_to "ログアウト", destroy_user_session_path, data: { turbo_method: :delete }, class: "btn btn-outline btn-md text-sm rounded-full" %>
+    <div class="navbar-end gap-6">
+
+      <!-- ユーザー情報変更 -->
+      <div class="flex items-center gap-0.5">
+        <ion-icon name="settings-outline"></ion-icon>
+        <%= link_to "アカウント設定", edit_user_registration_path,
+            class: "text-sm font-normal" %>
+      </div>
+
+      <!-- ログアウト -->
+        <%= link_to "ログアウト", destroy_user_session_path, data: { turbo_method: :delete },
+            class: "btn btn-outline btn-md text-sm rounded-full" %>
     </div>
+
   <% else %>
     <!-- ユーザー登録・ログイン -->
     <div class="navbar-end gap-3">
-      <%= link_to "ログイン", new_user_session_path, class: "btn btn-outline btn-md text-sm rounded-full" %>
-      <%= link_to "新規登録", new_user_registration_path, class: "btn-base btn-md text-sm rounded-full" %>
+      <%= link_to "ログイン", new_user_session_path,
+          class: "btn btn-outline btn-md text-sm rounded-full" %>
+      <%= link_to "新規登録", new_user_registration_path,
+          class: "btn-base btn-md text-sm rounded-full" %>
     </div>
   <% end %>
 </div>
