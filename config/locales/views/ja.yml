@@ -28,3 +28,8 @@ ja:
         access_denied:
           cooldown_active: "クールダウンが終わるまで、次のステップに進めません"
           after_decision: "すでに購入判断は完了しています"
+    journals:
+      update:
+        success: "更新しました"
+        failure: "更新できませんでした"
+      access_denied: "購入判断が完了していません"

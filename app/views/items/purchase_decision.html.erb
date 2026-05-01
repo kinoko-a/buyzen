@@ -12,15 +12,28 @@
 
     <!-- アイテム情報 -->
     <div class="bg-base-200 rounded-sm opacity-90">
-      <div class="p-1 ml-2">
+      <div class="flex flex-col items-start px-1 py-1.5 ml-2">
         <p class="font-medium"><%= @item.name %></p>
 
-        <ion-icon name="calendar-outline" class="text-sm translate-y-[2px]"></ion-icon>
-        <span class="text-sm">
-          <%= @item.created_at.strftime("%Y/%-m/%-d") %>
-          <span class="mx-0.5"></span>
-          <%= @item.created_at.strftime("%-H:%M") %>に登録
-        </span>
+        <div>
+          <ion-icon name="calendar-outline" class="text-sm translate-y-[2px]"></ion-icon>
+          <span class="text-sm">
+            <%= @item.created_at.strftime("%Y/%-m/%-d") %>
+            <span class="mx-0.5"></span>
+            <%= @item.created_at.strftime("%-H:%M") %>に登録
+          </span>
+        </div>
+
+        <div>
+          <ion-icon name="hourglass-outline" class="text-sm translate-y-[2px]"></ion-icon>
+          <span class="text-sm">
+            <% if @item.cooldown_skipped? %>
+              <span class="ml-[-1.5]">スキップ</span>
+            <% elsif @item.cooldown_finished? %>
+              <%= @item.cooldown_duration_text %> クールダウン
+            <% end %>
+          </span>
+        </div>
       </div>
     </div>
 
@@ -28,11 +41,11 @@
 
       <!-- 質問（任意回答） -->
       <h2 class="font-medium mt-11 mb-5 ml-1">質問から、気になった理由・買う理由を探してみる（任意）</h2>
-      <div class="space-y-4 max-w-xl mx-auto">
+      <div class="space-y-3 max-w-xl mx-auto">
 
         <!-- 欲しい度 -->
-        <div class="space-y-2 text-center mb-8">
-          <p class="text-sm font-medium leading-relaxed">
+        <div class="space-y-2 text-center mb-4">
+          <p class="text-sm font-medium">
             どのくらい欲しいと感じますか？<br>
             （1：欲しくない　～　5：とても欲しい）
           </p>
@@ -48,7 +61,7 @@
 
         <!-- 今の気分 -->
         <div class="space-y-2 text-center mb-5">
-          <p class="text-sm font-medium leading-relaxed">
+          <p class="text-sm font-medium">
             今の気分はどうですか？<br>
             （1：疲れている　～　5：元気）
           </p>
@@ -113,7 +126,7 @@
             class: "textarea textarea-bordered w-full focus:outline-none mt-1" %>
       </div>
 
-      <div class="border-t border-base-300 my-12"></div>
+      <div class="border-t border-neutral/25 my-12"></div>
 
       <!-- 購入判断 -->
       <div id="status-section" class="space-y-4">
@@ -184,7 +197,7 @@
         <% end %>
       </div>
 
-      <div class="border-t border-base-300 my-12"></div>
+      <div class="border-t border-neutral/25 my-12"></div>
 
       <!-- ボタン -->
       <div class="flex flex-col items-center gap-6">

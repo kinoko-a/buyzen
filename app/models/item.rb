@@ -1,7 +1,6 @@
 class Item < ApplicationRecord
   include ActionView::Helpers::DateHelper
 
-  before_update :set_decided_at
   before_save :set_cooldown_until, if: :will_save_change_to_cooldown_duration?
 
   validates :name, presence: true, length: { maximum: 70 }
@@ -76,14 +75,14 @@ class Item < ApplicationRecord
   # クールダウンタイマーの時間選択
   def cooldown_options_for_select
     self.class.cooldown_durations.keys.map do |key|
-      [ I18n.t("activerecord.enums.item.cooldown_duration.#{key}.label"),
+      [ I18n.t("activerecord.enums.item.cooldown_duration.new.#{key}.label"),
         key,
-        I18n.t("activerecord.enums.item.cooldown_duration.#{key}.description") ]
+        I18n.t("activerecord.enums.item.cooldown_duration.new.#{key}.description") ]
     end
   end
 
   def cooldown_duration_text
-    I18n.t("activerecord.enums.item.cooldown_duration.#{cooldown_duration}.label") if cooldown_duration.present?
+    I18n.t("activerecord.enums.item.cooldown_duration.short.#{cooldown_duration}") if cooldown_duration.present?
   end
 
   def remaining_time_text
@@ -136,15 +135,6 @@ class Item < ApplicationRecord
   end
 
   private
-
-  # 初回の購入判断後にdecided_atカラムを更新
-  def set_decided_at
-    return unless will_save_change_to_status?
-    return unless [ "thinking", "drafting" ].include?(status_was)
-    return unless decided?
-
-    self.decided_at ||= Time.current
-  end
 
   # アイテム登録時はクールダウン期間の選択が必要
   def cooldown_choice_valid

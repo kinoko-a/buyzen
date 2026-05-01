@@ -165,11 +165,17 @@ class ItemsController < ApplicationController
 
   def save_item(status)
     ActiveRecord::Base.transaction do
-      @item.update!(
+      @item.assign_attributes(
         status: status,
         desire_level: params.dig(:item, :desire_level),
         current_mood: params.dig(:item, :current_mood)
       )
+
+      if @item.decided? && @item.decided_at.blank?
+        @item.decided_at = Time.current
+      end
+
+      @item.save!
 
       save_answers
       save_journal

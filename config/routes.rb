@@ -10,6 +10,8 @@ Rails.application.routes.draw do
       get :purchase_decision
       patch :submit_decision
     end
+
+    resource :journal, only: [ :edit, :update ]
   end
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
