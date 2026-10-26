@@ -32,7 +32,7 @@ RSpec.describe Item, type: :model do
 
   describe "enum" do
     it "statusが正しく定義されている" do
-      expect(Item.statuses.keys).to contain_exactly("thinking", "decided_buy", "decided_skip")
+      expect(Item.statuses.keys).to contain_exactly("thinking", "drafting", "decided_buy", "decided_skip")
     end
 
     it "初期状態はthinkingである" do
